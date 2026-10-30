@@ -1,6 +1,8 @@
 
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import re
 
 URL = "https://www.vinted.se/catalog?search_text=ralph%20Lauren%20hoodie&price_to=150.00&currency=SEK&order=newest_first"
 
@@ -13,26 +15,45 @@ response = requests.get(URL, headers=headers, timeout=20)
 print("HTTP-status:", response.status_code)
 
 if response.status_code != 200:
-    print("Kunde inte hämta sidan.")
-    raise SystemExit
+    raise SystemExit("Kunde inte hämta sidan.")
 
 soup = BeautifulSoup(response.text, "html.parser")
-links = soup.select('a[href*="/items/"]')
+seen = set()
+count = 0
 
-print("Hittade annonslänkar:", len(links))
+for link in soup.select('a[href*="/items/"]'):
+    href = link.get("href", "")
+    if href in seen:
+        continue
+    seen.add(href)
 
-for number, link in enumerate(links[:5], start=1):
-    print(f"\n--- ANNONS {number} ---")
-    print("Länk:", link.get("href"))
-    print("Länktext:", link.get_text(" ", strip=True))
-    print("Aria-label:", link.get("aria-label"))
+    card = link.parent.parent
+    if not card:
+        continue
 
-    for img in link.find_all("img"):
-        print("Bildtext:", img.get("alt"))
+    text = card.get_text(" ", strip=True)
+    title = re.split(r'\d[\d\s]*,\d{2}\s*kr', text)[0]
+    title = re.sub(r'^\d+\s*', '', title).strip()
 
-    parent = link
-    for level in range(1, 4):
-        parent = parent.parent
-        if parent:
-            print(f"Föräldernivå {level}:",
-                  parent.get_text(" ", strip=True)[:500])
+    price_match = re.search(r'(\d[\d\s]*,\d{2})\s*kr', text)
+    if not price_match:
+        continue
+
+    price = float(price_match.group(1).replace(" ", "").replace(",", "."))
+
+    if "ralph lauren" not in title.lower():
+        continue
+
+    if "hoodie" not in href.lower():
+        continue
+
+    if price > 150:
+        continue
+
+    count += 1
+    print("\n--- FYND ---")
+    print("Titel:", title)
+    print("Pris:", price, "kr")
+    print("Länk:", urljoin("https://www.vinted.se", href))
+
+print("\nAntal möjliga fynd:", count)
