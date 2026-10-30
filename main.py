@@ -1,19 +1,18 @@
-import os
 import requests
 
-WEBHOOK = os.getenv("DISCORD_WEBHOOK")
+URL = "https://www.vinted.se/catalog?search_text=ralph%20Lauren%20hoodie&price_to=150.00&currency=SEK&search_id=5246591382&order=newest_first"
 
-def send_test():
-    if not WEBHOOK:
-        print("Discord webhook saknas!")
-        return
+try:
+    response = requests.get(URL, timeout=20)
 
-    message = {
-        "content": "🔥 VINTED SNIPER ONLINE! Discord-kopplingen fungerar."
-    }
+    print("HTTP-status:", response.status_code)
+    print("Svarsstorlek:", len(response.text), "tecken")
+    print("Sidans innehållstyp:", response.headers.get("Content-Type"))
 
-    response = requests.post(WEBHOOK, json=message, timeout=15)
-    print("Discord status:", response.status_code)
+    if response.status_code == 200:
+        print("Vinted-sidan kunde hämtas!")
+    else:
+        print("Vinted svarade inte med en lyckad status.")
 
-if __name__ == "__main__":
-    send_test()
+except requests.RequestException as error:
+    print("Anslutningsfel:", error)
