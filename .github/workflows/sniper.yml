@@ -29,6 +29,7 @@ jobs:
             seen_ids.txt
             seen_ids_it.txt
             seen_ids_colmar.txt
+            seen_ids_jl.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -46,4 +47,5 @@ jobs:
             seen_ids.txt
             seen_ids_it.txt
             seen_ids_colmar.txt
+            seen_ids_jl.txt
           key: vinted-seen-${{ github.run_id }}
