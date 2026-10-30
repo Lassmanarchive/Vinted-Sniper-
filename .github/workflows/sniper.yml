@@ -1,4 +1,3 @@
-
 name: Vinted Sniper
 
 on:
@@ -27,13 +26,9 @@ jobs:
         with:
           path: |
             seen_ids.txt
-            seen_ids_it.txt
             seen_ids_colmar.txt
-            seen_ids_colmar_it.txt
             seen_ids_jl.txt
-            seen_ids_jl_it.txt
             seen_ids_acne.txt
-            seen_ids_acne_it.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
             seen_ids_colmar_pl.txt
@@ -43,11 +38,9 @@ jobs:
             seen_ids_acne_pl.txt
             seen_ids_acne_dk.txt
             seen_ids_patagonia.txt
-            seen_ids_patagonia_it.txt
             seen_ids_patagonia_pl.txt
             seen_ids_patagonia_dk.txt
             seen_ids_rl_down.txt
-            seen_ids_rl_down_it.txt
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
           key: vinted-seen-${{ github.run_id }}
@@ -65,13 +58,9 @@ jobs:
         with:
           path: |
             seen_ids.txt
-            seen_ids_it.txt
             seen_ids_colmar.txt
-            seen_ids_colmar_it.txt
             seen_ids_jl.txt
-            seen_ids_jl_it.txt
             seen_ids_acne.txt
-            seen_ids_acne_it.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
             seen_ids_colmar_pl.txt
@@ -81,11 +70,9 @@ jobs:
             seen_ids_acne_pl.txt
             seen_ids_acne_dk.txt
             seen_ids_patagonia.txt
-            seen_ids_patagonia_it.txt
             seen_ids_patagonia_pl.txt
             seen_ids_patagonia_dk.txt
             seen_ids_rl_down.txt
-            seen_ids_rl_down_it.txt
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
           key: vinted-seen-${{ github.run_id }}
