@@ -25,7 +25,9 @@ jobs:
       - name: Restore seen listings
         uses: actions/cache/restore@v4
         with:
-          path: seen_ids.txt
+          path: |
+            seen_ids.txt
+            seen_ids_it.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -39,5 +41,7 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: seen_ids.txt
+          path: |
+            seen_ids.txt
+            seen_ids_it.txt
           key: vinted-seen-${{ github.run_id }}
