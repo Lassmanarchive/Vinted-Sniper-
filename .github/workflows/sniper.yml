@@ -43,6 +43,7 @@ jobs:
             seen_ids_rl_down.txt
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
+            seen_ids_hollister.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -75,4 +76,5 @@ jobs:
             seen_ids_rl_down.txt
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
+            seen_ids_hollister.txt
           key: vinted-seen-${{ github.run_id }}
