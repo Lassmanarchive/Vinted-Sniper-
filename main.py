@@ -1,4 +1,3 @@
-
 import os
 import re
 from pathlib import Path
@@ -43,17 +42,6 @@ MARKETS = [
         "state": Path("seen_ids.txt"),
     },
     {
-        "name": "Ralph Lauren Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=ralph%20Lauren%20hoodie&price_to=13.00&currency=EUR&order=newest_first",
-        "brands": ("ralph lauren",),
-        "keywords": ("hoodie", "felpa", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 13,
-        "currency": "€",
-        "state": Path("seen_ids_it.txt"),
-    },
-    {
         "name": "Ralph Lauren Polen",
         "base": "https://www.vinted.pl",
         "url": "https://www.vinted.pl/catalog?search_text=ralph%20Lauren%20hoodie&price_to=60.00&currency=PLN&order=newest_first",
@@ -87,17 +75,6 @@ MARKETS = [
         "limit": 500,
         "currency": "kr",
         "state": Path("seen_ids_patagonia.txt"),
-    },
-    {
-        "name": "Patagonia västar Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=Patagonia&price_to=45.00&currency=EUR&order=newest_first",
-        "brands": ("patagonia",),
-        "keywords": ("gilet", "vest", "smanicato"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 45,
-        "currency": "€",
-        "state": Path("seen_ids_patagonia_it.txt"),
     },
     {
         "name": "Patagonia västar Polen",
@@ -135,17 +112,6 @@ MARKETS = [
         "state": Path("seen_ids_rl_down.txt"),
     },
     {
-        "name": "Ralph Lauren dunjackor Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=Ralph%20Lauren%20piumino&price_to=70.00&currency=EUR&order=newest_first",
-        "brands": ("ralph lauren",),
-        "keywords": ("piumino", "giacca imbottita", "down jacket", "puffer"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 70,
-        "currency": "€",
-        "state": Path("seen_ids_rl_down_it.txt"),
-    },
-    {
         "name": "Ralph Lauren dunjackor Polen",
         "base": "https://www.vinted.pl",
         "url": "https://www.vinted.pl/catalog?search_text=Ralph%20Lauren%20kurtka%20puchowa&price_to=320.00&currency=PLN&order=newest_first",
@@ -179,17 +145,6 @@ MARKETS = [
         "limit": 250,
         "currency": "kr",
         "state": Path("seen_ids_colmar.txt"),
-    },
-    {
-        "name": "Colmar Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=Colmar&price_to=25.00&currency=EUR&order=newest_first",
-        "brands": ("colmar",),
-        "keywords": ("giacca", "giubbotto", "piumino", "cappotto", "jacket", "puffer", "coat"),
-        "sizes": {"S", "M", "L"},
-        "limit": 25,
-        "currency": "€",
-        "state": Path("seen_ids_colmar_it.txt"),
     },
     {
         "name": "Colmar Polen",
@@ -227,17 +182,6 @@ MARKETS = [
         "state": Path("seen_ids_jl.txt"),
     },
     {
-        "name": "J.Lindeberg Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=J.Lindeberg&price_to=25.00&currency=EUR&order=newest_first",
-        "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        "keywords": ("giacca", "giubbotto", "piumino", "cappotto", "jacket", "puffer", "coat"),
-        "sizes": {"S", "M", "L"},
-        "limit": 25,
-        "currency": "€",
-        "state": Path("seen_ids_jl_it.txt"),
-    },
-    {
         "name": "J.Lindeberg Polen",
         "base": "https://www.vinted.pl",
         "url": "https://www.vinted.pl/catalog?search_text=J.Lindeberg%20jacket&price_to=100.00&currency=PLN&order=newest_first",
@@ -271,17 +215,6 @@ MARKETS = [
         "limit": 250,
         "currency": "kr",
         "state": Path("seen_ids_acne.txt"),
-    },
-    {
-        "name": "Acne Studios Italien",
-        "base": "https://www.vinted.it",
-        "url": "https://www.vinted.it/catalog?search_text=Acne%20Studios%20hoodie&price_to=25.00&currency=EUR&order=newest_first",
-        "brands": ("acne studios", "acne"),
-        "keywords": ("hoodie", "felpa", "sweatshirt"),
-        "sizes": {"S", "M", "L"},
-        "limit": 25,
-        "currency": "€",
-        "state": Path("seen_ids_acne_it.txt"),
     },
     {
         "name": "Acne Studios Polen",
