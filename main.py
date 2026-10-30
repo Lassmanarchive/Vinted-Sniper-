@@ -23,7 +23,7 @@ MARKETS = [
             "search_text=ralph%20Lauren%20hoodie"
             "&price_to=150.00&currency=SEK&order=newest_first"
         ),
-        "brand": "ralph lauren",
+        "brands": ("ralph lauren",),
         "keywords": ("hoodie", "felpa", "sweatshirt"),
         "sizes": {"S", "M", "L", "XL"},
         "limit": 150,
@@ -38,7 +38,7 @@ MARKETS = [
             "search_text=ralph%20Lauren%20hoodie"
             "&price_to=13.00&currency=EUR&order=newest_first"
         ),
-        "brand": "ralph lauren",
+        "brands": ("ralph lauren",),
         "keywords": ("hoodie", "felpa", "sweatshirt"),
         "sizes": {"S", "M", "L", "XL"},
         "limit": 13,
@@ -53,7 +53,7 @@ MARKETS = [
             "search_text=Colmar"
             "&price_to=250.00&currency=SEK&order=newest_first"
         ),
-        "brand": "colmar",
+        "brands": ("colmar",),
         "keywords": (
             "jacka", "jacket", "puffer",
             "dunjacka", "vinterjacka"
@@ -62,6 +62,24 @@ MARKETS = [
         "limit": 250,
         "currency": "kr",
         "state": Path("seen_ids_colmar.txt"),
+    },
+    {
+        "name": "J.Lindeberg Sverige",
+        "base": "https://www.vinted.se",
+        "url": (
+            "https://www.vinted.se/catalog?"
+            "search_text=J.Lindeberg"
+            "&price_to=250.00&currency=SEK&order=newest_first"
+        ),
+        "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        "keywords": (
+            "jacka", "jacket", "puffer",
+            "dunjacka", "vinterjacka", "coat"
+        ),
+        "sizes": {"S", "M", "L"},
+        "limit": 250,
+        "currency": "kr",
+        "state": Path("seen_ids_jl.txt"),
     },
 ]
 
@@ -122,7 +140,12 @@ def scan_market(market):
         )[0]
         title = re.sub(r'^\d+\s*', '', title).strip()
 
-        if market["brand"] not in title.lower():
+        title_lower = title.lower()
+
+        if not any(
+            brand in title_lower
+            for brand in market["brands"]
+        ):
             continue
 
         searchable = (title + " " + href).lower()
