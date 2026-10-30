@@ -14,6 +14,31 @@ HEADERS = {
     "Accept": "text/html"
 }
 
+# Filtrera bort annonser som nämner skador eller dåligt skick.
+BAD_CONDITION_TERMS = (
+    # Svenska
+    "defekt", "trasig", "trasigt", "hål", "fläck", "fläckig",
+    "missfärgad", "sliten", "nopprig", "reva", "sprucken",
+    "skadad", "skadat",
+
+    # Engelska
+    "damaged", "defective", "broken", "stained", "stain",
+    "worn out", "torn", "ripped", "faded", "pilling",
+    "hole", "holes",
+
+    # Italienska
+    "difettoso", "strappato", "macchiato", "rovinato",
+    "usurato", "macchia",
+
+    # Polska
+    "uszkodzony", "dziura", "plama", "przetarty",
+    "zniszczony",
+
+    # Danska
+    "defekt", "hullet", "plet", "plettet", "slidt",
+    "ødelagt", "beskadiget",
+)
+
 MARKETS = [
     # RALPH LAUREN
     {
@@ -219,6 +244,18 @@ def parse_price(text):
     return float(raw_price)
 
 
+def has_bad_condition(text):
+    searchable = text.lower()
+
+    return any(
+        re.search(
+            rf"(?<!\w){re.escape(term)}(?!\w)",
+            searchable
+        )
+        for term in BAD_CONDITION_TERMS
+    )
+
+
 def scan_market(market):
     print("Bevakar:", market["name"])
 
@@ -260,6 +297,10 @@ def scan_market(market):
         title = re.sub(r'^\d+\s*', '', title).strip()
 
         searchable = (text + " " + href).lower()
+
+        # Hoppa över annonser som nämner dåligt skick.
+        if has_bad_condition(searchable):
+            continue
 
         if not any(
             brand in searchable
