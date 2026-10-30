@@ -21,8 +21,11 @@ soup = BeautifulSoup(response.text, "html.parser")
 seen = set()
 count = 0
 
+allowed_sizes = {"S", "M", "L", "XL"}
+
 for link in soup.select('a[href*="/items/"]'):
     href = link.get("href", "")
+
     if href in seen:
         continue
     seen.add(href)
@@ -39,7 +42,20 @@ for link in soup.select('a[href*="/items/"]'):
     if not price_match:
         continue
 
-    price = float(price_match.group(1).replace(" ", "").replace(",", "."))
+    price = float(
+        price_match.group(1).replace(" ", "").replace(",", ".")
+    )
+
+    size_match = re.search(r'(?<![A-Z])(XL|XXL|XS|S|M|L)(?![A-Z])',
+                           title.upper())
+
+    if not size_match:
+        continue
+
+    size = size_match.group(1)
+
+    if size not in allowed_sizes:
+        continue
 
     if "ralph lauren" not in title.lower():
         continue
@@ -53,7 +69,8 @@ for link in soup.select('a[href*="/items/"]'):
     count += 1
     print("\n--- FYND ---")
     print("Titel:", title)
+    print("Storlek:", size)
     print("Pris:", price, "kr")
     print("Länk:", urljoin("https://www.vinted.se", href))
 
-print("\nAntal möjliga fynd:", count)
+print("\nAntal fynd i S–XL:", count)
