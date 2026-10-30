@@ -53,10 +53,7 @@ MARKETS = [
         "base": "https://www.vinted.it",
         "url": "https://www.vinted.it/catalog?search_text=Colmar&price_to=25.00&currency=EUR&order=newest_first",
         "brands": ("colmar",),
-        "keywords": (
-            "giacca", "giubbotto", "piumino", "cappotto",
-            "jacket", "puffer", "coat"
-        ),
+        "keywords": ("giacca", "giubbotto", "piumino", "cappotto", "jacket", "puffer", "coat"),
         "sizes": {"S", "M", "L"},
         "limit": 25,
         "currency": "€",
@@ -78,14 +75,33 @@ MARKETS = [
         "base": "https://www.vinted.it",
         "url": "https://www.vinted.it/catalog?search_text=J.Lindeberg&price_to=25.00&currency=EUR&order=newest_first",
         "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        "keywords": (
-            "giacca", "giubbotto", "piumino", "cappotto",
-            "jacket", "puffer", "coat"
-        ),
+        "keywords": ("giacca", "giubbotto", "piumino", "cappotto", "jacket", "puffer", "coat"),
         "sizes": {"S", "M", "L"},
         "limit": 25,
         "currency": "€",
         "state": Path("seen_ids_jl_it.txt"),
+    },
+    {
+        "name": "Acne Studios Sverige",
+        "base": "https://www.vinted.se",
+        "url": "https://www.vinted.se/catalog?search_text=Acne%20Studios%20hoodie&price_to=250.00&currency=SEK&order=newest_first",
+        "brands": ("acne studios", "acne"),
+        "keywords": ("hoodie", "hooded sweatshirt", "sweatshirt"),
+        "sizes": {"S", "M", "L"},
+        "limit": 250,
+        "currency": "kr",
+        "state": Path("seen_ids_acne.txt"),
+    },
+    {
+        "name": "Acne Studios Italien",
+        "base": "https://www.vinted.it",
+        "url": "https://www.vinted.it/catalog?search_text=Acne%20Studios%20hoodie&price_to=25.00&currency=EUR&order=newest_first",
+        "brands": ("acne studios", "acne"),
+        "keywords": ("hoodie", "felpa", "sweatshirt"),
+        "sizes": {"S", "M", "L"},
+        "limit": 25,
+        "currency": "€",
+        "state": Path("seen_ids_acne_it.txt"),
     },
 ]
 
@@ -146,15 +162,13 @@ def scan_market(market):
         )[0]
         title = re.sub(r'^\d+\s*', '', title).strip()
 
-        title_lower = title.lower()
+        searchable = (text + " " + href).lower()
 
         if not any(
-            brand in title_lower
+            brand in searchable
             for brand in market["brands"]
         ):
             continue
-
-        searchable = (title + " " + href).lower()
 
         if not any(
             word in searchable
@@ -164,7 +178,7 @@ def scan_market(market):
 
         size_match = re.search(
             r'(?<![A-Z])(XXL|XS|XL|S|M|L)(?![A-Z])',
-            title.upper()
+            text.upper()
         )
 
         if not size_match:
