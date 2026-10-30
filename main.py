@@ -1,5 +1,7 @@
 
 import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 URL = "https://www.vinted.se/catalog?search_text=ralph%20Lauren%20hoodie&price_to=150.00&currency=SEK&order=newest_first"
 
@@ -8,26 +10,33 @@ headers = {
     "Accept": "text/html"
 }
 
-try:
-    response = requests.get(
-        URL,
-        headers=headers,
-        timeout=20
-    )
+response = requests.get(URL, headers=headers, timeout=20)
+print("HTTP-status:", response.status_code)
 
-    print("HTTP-status:", response.status_code)
-    print("Svarsstorlek:", len(response.text))
-    print("Content-Type:", response.headers.get("Content-Type"))
-    print("Server:", response.headers.get("Server"))
-    print("Svar från Vinted:")
-    print(response.text[:500])
+if response.status_code != 200:
+    print("Kunde inte hämta annonserna.")
+    raise SystemExit
 
-    if response.status_code == 200:
-        print("Vinted-sidan kunde hämtas!")
-    elif response.status_code == 403:
-        print("Vinted nekar fortfarande åtkomst.")
-    else:
-        print("Vinted svarade med en annan status.")
+soup = BeautifulSoup(response.text, "html.parser")
 
-except requests.RequestException as error:
-    print("Anslutningsfel:", error)
+found = set()
+
+for link in soup.find_all("a", href=True):
+    href = link["href"]
+
+    if "/items/" not in href:
+        continue
+
+    full_url = urljoin("https://www.vinted.se", href)
+    title = link.get_text(" ", strip=True)
+
+    if full_url in found:
+        continue
+
+    found.add(full_url)
+
+    print("\nANNONS")
+    print("Titel:", title or "Ingen titel hittades")
+    print("Länk:", full_url)
+
+print("\nAntal unika annonslänkar:", len(found))
