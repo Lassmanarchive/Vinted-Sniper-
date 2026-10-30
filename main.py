@@ -14,33 +14,23 @@ HEADERS = {
     "Accept": "text/html"
 }
 
-# Filtrera bort annonser som nämner skador eller dåligt skick.
 BAD_CONDITION_TERMS = (
-    # Svenska
     "defekt", "trasig", "trasigt", "hål", "fläck", "fläckig",
     "missfärgad", "sliten", "nopprig", "reva", "sprucken",
     "skadad", "skadat",
-
-    # Engelska
     "damaged", "defective", "broken", "stained", "stain",
     "worn out", "torn", "ripped", "faded", "pilling",
     "hole", "holes",
-
-    # Italienska
     "difettoso", "strappato", "macchiato", "rovinato",
     "usurato", "macchia",
-
-    # Polska
     "uszkodzony", "dziura", "plama", "przetarty",
     "zniszczony",
-
-    # Danska
-    "defekt", "hullet", "plet", "plettet", "slidt",
+    "hullet", "plet", "plettet", "slidt",
     "ødelagt", "beskadiget",
 )
 
 MARKETS = [
-    # RALPH LAUREN
+    # RALPH LAUREN HOODIES
     {
         "name": "Ralph Lauren Sverige",
         "base": "https://www.vinted.se",
@@ -84,6 +74,98 @@ MARKETS = [
         "limit": 100,
         "currency": "kr",
         "state": Path("seen_ids_rl_dk.txt"),
+    },
+
+    # PATAGONIA VÄSTAR
+    {
+        "name": "Patagonia västar Sverige",
+        "base": "https://www.vinted.se",
+        "url": "https://www.vinted.se/catalog?search_text=Patagonia&price_to=500.00&currency=SEK&order=newest_first",
+        "brands": ("patagonia",),
+        "keywords": ("väst", "fleeceväst", "vest", "gilet"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 500,
+        "currency": "kr",
+        "state": Path("seen_ids_patagonia.txt"),
+    },
+    {
+        "name": "Patagonia västar Italien",
+        "base": "https://www.vinted.it",
+        "url": "https://www.vinted.it/catalog?search_text=Patagonia&price_to=45.00&currency=EUR&order=newest_first",
+        "brands": ("patagonia",),
+        "keywords": ("gilet", "vest", "smanicato"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 45,
+        "currency": "€",
+        "state": Path("seen_ids_patagonia_it.txt"),
+    },
+    {
+        "name": "Patagonia västar Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=Patagonia&price_to=200.00&currency=PLN&order=newest_first",
+        "brands": ("patagonia",),
+        "keywords": ("kamizelka", "bezrękawnik", "vest"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 200,
+        "currency": "zł",
+        "state": Path("seen_ids_patagonia_pl.txt"),
+    },
+    {
+        "name": "Patagonia västar Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=Patagonia&price_to=335.00&currency=DKK&order=newest_first",
+        "brands": ("patagonia",),
+        "keywords": ("vest", "fleecevest"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 335,
+        "currency": "kr",
+        "state": Path("seen_ids_patagonia_dk.txt"),
+    },
+
+    # RALPH LAUREN DUNJACKOR
+    {
+        "name": "Ralph Lauren dunjackor Sverige",
+        "base": "https://www.vinted.se",
+        "url": "https://www.vinted.se/catalog?search_text=Ralph%20Lauren%20down%20jacket&price_to=800.00&currency=SEK&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("dunjacka", "dun", "down jacket", "down coat", "puffer", "puffjacka"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 800,
+        "currency": "kr",
+        "state": Path("seen_ids_rl_down.txt"),
+    },
+    {
+        "name": "Ralph Lauren dunjackor Italien",
+        "base": "https://www.vinted.it",
+        "url": "https://www.vinted.it/catalog?search_text=Ralph%20Lauren%20piumino&price_to=70.00&currency=EUR&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("piumino", "giacca imbottita", "down jacket", "puffer"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 70,
+        "currency": "€",
+        "state": Path("seen_ids_rl_down_it.txt"),
+    },
+    {
+        "name": "Ralph Lauren dunjackor Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=Ralph%20Lauren%20kurtka%20puchowa&price_to=320.00&currency=PLN&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("kurtka puchowa", "puchowa", "puch", "down jacket", "puffer"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 320,
+        "currency": "zł",
+        "state": Path("seen_ids_rl_down_pl.txt"),
+    },
+    {
+        "name": "Ralph Lauren dunjackor Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=Ralph%20Lauren%20dunjakke&price_to=535.00&currency=DKK&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("dunjakke", "dun", "down jacket", "puffer"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 535,
+        "currency": "kr",
+        "state": Path("seen_ids_rl_down_dk.txt"),
     },
 
     # COLMAR
@@ -298,7 +380,6 @@ def scan_market(market):
 
         searchable = (text + " " + href).lower()
 
-        # Hoppa över annonser som nämner dåligt skick.
         if has_bad_condition(searchable):
             continue
 
