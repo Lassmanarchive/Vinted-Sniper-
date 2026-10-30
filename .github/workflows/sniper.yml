@@ -28,6 +28,7 @@ jobs:
           path: |
             seen_ids.txt
             seen_ids_it.txt
+            seen_ids_colmar.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -44,4 +45,5 @@ jobs:
           path: |
             seen_ids.txt
             seen_ids_it.txt
+            seen_ids_colmar.txt
           key: vinted-seen-${{ github.run_id }}
