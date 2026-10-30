@@ -1,3 +1,4 @@
+
 name: Vinted Sniper
 
 on:
@@ -6,14 +7,14 @@ on:
     - cron: "2-59/5 * * * *"
 
 jobs:
-  sniper:
+  monitor:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -21,11 +22,34 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Restore seen items cache
+      - name: Restore seen listings
         uses: actions/cache/restore@v4
         with:
           path: |
-            seen_ids
+            seen_ids.txt
+            seen_ids_it.txt
+            seen_ids_colmar.txt
+            seen_ids_colmar_it.txt
+            seen_ids_jl.txt
+            seen_ids_jl_it.txt
+            seen_ids_acne.txt
+            seen_ids_acne_it.txt
+            seen_ids_rl_pl.txt
+            seen_ids_rl_dk.txt
+            seen_ids_colmar_pl.txt
+            seen_ids_colmar_dk.txt
+            seen_ids_jl_pl.txt
+            seen_ids_jl_dk.txt
+            seen_ids_acne_pl.txt
+            seen_ids_acne_dk.txt
+            seen_ids_patagonia.txt
+            seen_ids_patagonia_it.txt
+            seen_ids_patagonia_pl.txt
+            seen_ids_patagonia_dk.txt
+            seen_ids_rl_down.txt
+            seen_ids_rl_down_it.txt
+            seen_ids_rl_down_pl.txt
+            seen_ids_rl_down_dk.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -35,10 +59,33 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python main.py
 
-      - name: Save seen items cache
+      - name: Save seen listings
         if: always()
         uses: actions/cache/save@v4
         with:
           path: |
-            seen_ids
+            seen_ids.txt
+            seen_ids_it.txt
+            seen_ids_colmar.txt
+            seen_ids_colmar_it.txt
+            seen_ids_jl.txt
+            seen_ids_jl_it.txt
+            seen_ids_acne.txt
+            seen_ids_acne_it.txt
+            seen_ids_rl_pl.txt
+            seen_ids_rl_dk.txt
+            seen_ids_colmar_pl.txt
+            seen_ids_colmar_dk.txt
+            seen_ids_jl_pl.txt
+            seen_ids_jl_dk.txt
+            seen_ids_acne_pl.txt
+            seen_ids_acne_dk.txt
+            seen_ids_patagonia.txt
+            seen_ids_patagonia_it.txt
+            seen_ids_patagonia_pl.txt
+            seen_ids_patagonia_dk.txt
+            seen_ids_rl_down.txt
+            seen_ids_rl_down_it.txt
+            seen_ids_rl_down_pl.txt
+            seen_ids_rl_down_dk.txt
           key: vinted-seen-${{ github.run_id }}
