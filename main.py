@@ -16,13 +16,9 @@ HEADERS = {
 
 MARKETS = [
     {
-        "name": "Sverige",
+        "name": "Ralph Lauren Sverige",
         "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=ralph%20Lauren%20hoodie"
-            "&price_to=150.00&currency=SEK&order=newest_first"
-        ),
+        "url": "https://www.vinted.se/catalog?search_text=ralph%20Lauren%20hoodie&price_to=150.00&currency=SEK&order=newest_first",
         "brands": ("ralph lauren",),
         "keywords": ("hoodie", "felpa", "sweatshirt"),
         "sizes": {"S", "M", "L", "XL"},
@@ -31,13 +27,9 @@ MARKETS = [
         "state": Path("seen_ids.txt"),
     },
     {
-        "name": "Italien",
+        "name": "Ralph Lauren Italien",
         "base": "https://www.vinted.it",
-        "url": (
-            "https://www.vinted.it/catalog?"
-            "search_text=ralph%20Lauren%20hoodie"
-            "&price_to=13.00&currency=EUR&order=newest_first"
-        ),
+        "url": "https://www.vinted.it/catalog?search_text=ralph%20Lauren%20hoodie&price_to=13.00&currency=EUR&order=newest_first",
         "brands": ("ralph lauren",),
         "keywords": ("hoodie", "felpa", "sweatshirt"),
         "sizes": {"S", "M", "L", "XL"},
@@ -48,38 +40,46 @@ MARKETS = [
     {
         "name": "Colmar Sverige",
         "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Colmar"
-            "&price_to=250.00&currency=SEK&order=newest_first"
-        ),
+        "url": "https://www.vinted.se/catalog?search_text=Colmar&price_to=250.00&currency=SEK&order=newest_first",
         "brands": ("colmar",),
-        "keywords": (
-            "jacka", "jacket", "puffer",
-            "dunjacka", "vinterjacka"
-        ),
+        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka"),
         "sizes": {"S", "M", "L"},
         "limit": 250,
         "currency": "kr",
         "state": Path("seen_ids_colmar.txt"),
     },
     {
+        "name": "Colmar Italien",
+        "base": "https://www.vinted.it",
+        "url": "https://www.vinted.it/catalog?search_text=Colmar&price_to=25.00&currency=EUR&order=newest_first",
+        "brands": ("colmar",),
+        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka"),
+        "sizes": {"S", "M", "L"},
+        "limit": 25,
+        "currency": "€",
+        "state": Path("seen_ids_colmar_it.txt"),
+    },
+    {
         "name": "J.Lindeberg Sverige",
         "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=J.Lindeberg"
-            "&price_to=250.00&currency=SEK&order=newest_first"
-        ),
+        "url": "https://www.vinted.se/catalog?search_text=J.Lindeberg&price_to=250.00&currency=SEK&order=newest_first",
         "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        "keywords": (
-            "jacka", "jacket", "puffer",
-            "dunjacka", "vinterjacka", "coat"
-        ),
+        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka", "coat"),
         "sizes": {"S", "M", "L"},
         "limit": 250,
         "currency": "kr",
         "state": Path("seen_ids_jl.txt"),
+    },
+    {
+        "name": "J.Lindeberg Italien",
+        "base": "https://www.vinted.it",
+        "url": "https://www.vinted.it/catalog?search_text=J.Lindeberg&price_to=25.00&currency=EUR&order=newest_first",
+        "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka", "coat"),
+        "sizes": {"S", "M", "L"},
+        "limit": 25,
+        "currency": "€",
+        "state": Path("seen_ids_jl_it.txt"),
     },
 ]
 
