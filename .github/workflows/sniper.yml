@@ -34,6 +34,14 @@ jobs:
             seen_ids_jl_it.txt
             seen_ids_acne.txt
             seen_ids_acne_it.txt
+            seen_ids_rl_pl.txt
+            seen_ids_rl_dk.txt
+            seen_ids_colmar_pl.txt
+            seen_ids_colmar_dk.txt
+            seen_ids_jl_pl.txt
+            seen_ids_jl_dk.txt
+            seen_ids_acne_pl.txt
+            seen_ids_acne_dk.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -56,4 +64,12 @@ jobs:
             seen_ids_jl_it.txt
             seen_ids_acne.txt
             seen_ids_acne_it.txt
+            seen_ids_rl_pl.txt
+            seen_ids_rl_dk.txt
+            seen_ids_colmar_pl.txt
+            seen_ids_colmar_dk.txt
+            seen_ids_jl_pl.txt
+            seen_ids_jl_dk.txt
+            seen_ids_acne_pl.txt
+            seen_ids_acne_dk.txt
           key: vinted-seen-${{ github.run_id }}
