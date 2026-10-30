@@ -53,7 +53,10 @@ MARKETS = [
         "base": "https://www.vinted.it",
         "url": "https://www.vinted.it/catalog?search_text=Colmar&price_to=25.00&currency=EUR&order=newest_first",
         "brands": ("colmar",),
-        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka"),
+        "keywords": (
+            "giacca", "giubbotto", "piumino", "cappotto",
+            "jacket", "puffer", "coat"
+        ),
         "sizes": {"S", "M", "L"},
         "limit": 25,
         "currency": "€",
@@ -75,7 +78,10 @@ MARKETS = [
         "base": "https://www.vinted.it",
         "url": "https://www.vinted.it/catalog?search_text=J.Lindeberg&price_to=25.00&currency=EUR&order=newest_first",
         "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        "keywords": ("jacka", "jacket", "puffer", "dunjacka", "vinterjacka", "coat"),
+        "keywords": (
+            "giacca", "giubbotto", "piumino", "cappotto",
+            "jacket", "puffer", "coat"
+        ),
         "sizes": {"S", "M", "L"},
         "limit": 25,
         "currency": "€",
