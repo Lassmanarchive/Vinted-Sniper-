@@ -64,6 +64,19 @@ MARKETS = [
         "state": Path("seen_ids_rl_dk.txt"),
     },
 
+    # HOLLISTER HOODIES
+    {
+        "name": "Hollister hoodies Sverige",
+        "base": "https://www.vinted.se",
+        "url": "https://www.vinted.se/catalog?search_text=Hollister%20hoodie&price_to=199.00&currency=SEK&order=newest_first",
+        "brands": ("hollister",),
+        "keywords": ("hoodie", "sweatshirt"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 199,
+        "currency": "kr",
+        "state": Path("seen_ids_hollister.txt"),
+    },
+
     # PATAGONIA VÄSTAR
     {
         "name": "Patagonia västar Sverige",
