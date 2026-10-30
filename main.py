@@ -15,6 +15,7 @@ HEADERS = {
 }
 
 MARKETS = [
+    # RALPH LAUREN
     {
         "name": "Ralph Lauren Sverige",
         "base": "https://www.vinted.se",
@@ -38,6 +39,30 @@ MARKETS = [
         "state": Path("seen_ids_it.txt"),
     },
     {
+        "name": "Ralph Lauren Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=ralph%20Lauren%20hoodie&price_to=60.00&currency=PLN&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("hoodie", "bluza", "sweatshirt"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 60,
+        "currency": "zł",
+        "state": Path("seen_ids_rl_pl.txt"),
+    },
+    {
+        "name": "Ralph Lauren Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=ralph%20Lauren%20hoodie&price_to=100.00&currency=DKK&order=newest_first",
+        "brands": ("ralph lauren",),
+        "keywords": ("hoodie", "sweatshirt", "hættetrøje"),
+        "sizes": {"S", "M", "L", "XL"},
+        "limit": 100,
+        "currency": "kr",
+        "state": Path("seen_ids_rl_dk.txt"),
+    },
+
+    # COLMAR
+    {
         "name": "Colmar Sverige",
         "base": "https://www.vinted.se",
         "url": "https://www.vinted.se/catalog?search_text=Colmar&price_to=250.00&currency=SEK&order=newest_first",
@@ -59,6 +84,30 @@ MARKETS = [
         "currency": "€",
         "state": Path("seen_ids_colmar_it.txt"),
     },
+    {
+        "name": "Colmar Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=Colmar%20jacket&price_to=100.00&currency=PLN&order=newest_first",
+        "brands": ("colmar",),
+        "keywords": ("kurtka", "puchowa", "zimowa", "jacket", "puffer"),
+        "sizes": {"S", "M", "L"},
+        "limit": 100,
+        "currency": "zł",
+        "state": Path("seen_ids_colmar_pl.txt"),
+    },
+    {
+        "name": "Colmar Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=Colmar%20jacket&price_to=170.00&currency=DKK&order=newest_first",
+        "brands": ("colmar",),
+        "keywords": ("jakke", "dunjakke", "vinterjakke", "jacket", "puffer"),
+        "sizes": {"S", "M", "L"},
+        "limit": 170,
+        "currency": "kr",
+        "state": Path("seen_ids_colmar_dk.txt"),
+    },
+
+    # J.LINDEBERG
     {
         "name": "J.Lindeberg Sverige",
         "base": "https://www.vinted.se",
@@ -82,6 +131,30 @@ MARKETS = [
         "state": Path("seen_ids_jl_it.txt"),
     },
     {
+        "name": "J.Lindeberg Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=J.Lindeberg%20jacket&price_to=100.00&currency=PLN&order=newest_first",
+        "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        "keywords": ("kurtka", "puchowa", "zimowa", "jacket", "puffer", "coat"),
+        "sizes": {"S", "M", "L"},
+        "limit": 100,
+        "currency": "zł",
+        "state": Path("seen_ids_jl_pl.txt"),
+    },
+    {
+        "name": "J.Lindeberg Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=J.Lindeberg%20jacket&price_to=170.00&currency=DKK&order=newest_first",
+        "brands": ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        "keywords": ("jakke", "dunjakke", "vinterjakke", "jacket", "puffer", "coat"),
+        "sizes": {"S", "M", "L"},
+        "limit": 170,
+        "currency": "kr",
+        "state": Path("seen_ids_jl_dk.txt"),
+    },
+
+    # ACNE STUDIOS
+    {
         "name": "Acne Studios Sverige",
         "base": "https://www.vinted.se",
         "url": "https://www.vinted.se/catalog?search_text=Acne%20Studios%20hoodie&price_to=250.00&currency=SEK&order=newest_first",
@@ -103,24 +176,47 @@ MARKETS = [
         "currency": "€",
         "state": Path("seen_ids_acne_it.txt"),
     },
+    {
+        "name": "Acne Studios Polen",
+        "base": "https://www.vinted.pl",
+        "url": "https://www.vinted.pl/catalog?search_text=Acne%20Studios%20hoodie&price_to=100.00&currency=PLN&order=newest_first",
+        "brands": ("acne studios", "acne"),
+        "keywords": ("hoodie", "bluza", "sweatshirt"),
+        "sizes": {"S", "M", "L"},
+        "limit": 100,
+        "currency": "zł",
+        "state": Path("seen_ids_acne_pl.txt"),
+    },
+    {
+        "name": "Acne Studios Danmark",
+        "base": "https://www.vinted.dk",
+        "url": "https://www.vinted.dk/catalog?search_text=Acne%20Studios%20hoodie&price_to=170.00&currency=DKK&order=newest_first",
+        "brands": ("acne studios", "acne"),
+        "keywords": ("hoodie", "sweatshirt", "hættetrøje"),
+        "sizes": {"S", "M", "L"},
+        "limit": 170,
+        "currency": "kr",
+        "state": Path("seen_ids_acne_dk.txt"),
+    },
 ]
 
 
 def parse_price(text):
     match = re.search(
-        r'(\d[\d\s.]*,\d{2})\s*(?:kr|€|EUR)',
-        text
+        r'(\d[\d\s.,]*[,.]\d{2})\s*(?:kr\.?|€|EUR|zł)',
+        text,
+        re.IGNORECASE
     )
 
     if not match:
         return None
 
-    return float(
-        match.group(1)
-        .replace(" ", "")
-        .replace(".", "")
-        .replace(",", ".")
-    )
+    raw_price = match.group(1).replace(" ", "")
+
+    if "," in raw_price:
+        raw_price = raw_price.replace(".", "").replace(",", ".")
+
+    return float(raw_price)
 
 
 def scan_market(market):
@@ -157,8 +253,9 @@ def scan_market(market):
             continue
 
         title = re.split(
-            r'\d[\d\s.]*,\d{2}\s*(?:kr|€|EUR)',
-            text
+            r'\d[\d\s.,]*[,.]\d{2}\s*(?:kr\.?|€|EUR|zł)',
+            text,
+            flags=re.IGNORECASE
         )[0]
         title = re.sub(r'^\d+\s*', '', title).strip()
 
