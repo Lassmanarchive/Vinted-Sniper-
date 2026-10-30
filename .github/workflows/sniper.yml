@@ -1,3 +1,4 @@
+
 name: Vinted Sniper
 
 on:
@@ -8,6 +9,7 @@ on:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +22,22 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Restore seen listings
+        uses: actions/cache/restore@v4
+        with:
+          path: seen_ids.txt
+          key: vinted-seen-${{ github.run_id }}
+          restore-keys: |
+            vinted-seen-
+
       - name: Run sniper
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python main.py
+
+      - name: Save seen listings
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: seen_ids.txt
+          key: vinted-seen-${{ github.run_id }}
