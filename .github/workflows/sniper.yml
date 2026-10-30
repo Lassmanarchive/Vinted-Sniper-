@@ -4,7 +4,8 @@ name: Vinted Sniper
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/5 * * * *"
+schedule:
+    - cron: "3-58/5 * * * *"
 
 jobs:
   monitor:
