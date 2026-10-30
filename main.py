@@ -8,7 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 
 WEBHOOK = os.getenv("DISCORD_WEBHOOK")
-ALLOWED_SIZES = {"S", "M", "L", "XL"}
 
 HEADERS = {
     "User-Agent": "VintedSniper/0.1",
@@ -24,6 +23,9 @@ MARKETS = [
             "search_text=ralph%20Lauren%20hoodie"
             "&price_to=150.00&currency=SEK&order=newest_first"
         ),
+        "brand": "ralph lauren",
+        "keywords": ("hoodie", "felpa", "sweatshirt"),
+        "sizes": {"S", "M", "L", "XL"},
         "limit": 150,
         "currency": "kr",
         "state": Path("seen_ids.txt"),
@@ -36,9 +38,30 @@ MARKETS = [
             "search_text=ralph%20Lauren%20hoodie"
             "&price_to=13.00&currency=EUR&order=newest_first"
         ),
+        "brand": "ralph lauren",
+        "keywords": ("hoodie", "felpa", "sweatshirt"),
+        "sizes": {"S", "M", "L", "XL"},
         "limit": 13,
         "currency": "€",
         "state": Path("seen_ids_it.txt"),
+    },
+    {
+        "name": "Colmar Sverige",
+        "base": "https://www.vinted.se",
+        "url": (
+            "https://www.vinted.se/catalog?"
+            "search_text=Colmar"
+            "&price_to=250.00&currency=SEK&order=newest_first"
+        ),
+        "brand": "colmar",
+        "keywords": (
+            "jacka", "jacket", "puffer",
+            "dunjacka", "vinterjacka"
+        ),
+        "sizes": {"S", "M", "L"},
+        "limit": 250,
+        "currency": "kr",
+        "state": Path("seen_ids_colmar.txt"),
     },
 ]
 
@@ -99,12 +122,15 @@ def scan_market(market):
         )[0]
         title = re.sub(r'^\d+\s*', '', title).strip()
 
-        if "ralph lauren" not in title.lower():
+        if market["brand"] not in title.lower():
             continue
 
         searchable = (title + " " + href).lower()
-        if not any(word in searchable for word in
-                   ("hoodie", "felpa", "sweatshirt")):
+
+        if not any(
+            word in searchable
+            for word in market["keywords"]
+        ):
             continue
 
         size_match = re.search(
@@ -117,10 +143,11 @@ def scan_market(market):
 
         size = size_match.group(1)
 
-        if size not in ALLOWED_SIZES:
+        if size not in market["sizes"]:
             continue
 
         item_id_match = re.search(r'/items/(\d+)', href)
+
         if not item_id_match:
             continue
 
