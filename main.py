@@ -1,7 +1,6 @@
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 URL = "https://www.vinted.se/catalog?search_text=ralph%20Lauren%20hoodie&price_to=150.00&currency=SEK&order=newest_first"
 
@@ -14,29 +13,26 @@ response = requests.get(URL, headers=headers, timeout=20)
 print("HTTP-status:", response.status_code)
 
 if response.status_code != 200:
-    print("Kunde inte hämta annonserna.")
+    print("Kunde inte hämta sidan.")
     raise SystemExit
 
 soup = BeautifulSoup(response.text, "html.parser")
+links = soup.select('a[href*="/items/"]')
 
-found = set()
+print("Hittade annonslänkar:", len(links))
 
-for link in soup.find_all("a", href=True):
-    href = link["href"]
+for number, link in enumerate(links[:5], start=1):
+    print(f"\n--- ANNONS {number} ---")
+    print("Länk:", link.get("href"))
+    print("Länktext:", link.get_text(" ", strip=True))
+    print("Aria-label:", link.get("aria-label"))
 
-    if "/items/" not in href:
-        continue
+    for img in link.find_all("img"):
+        print("Bildtext:", img.get("alt"))
 
-    full_url = urljoin("https://www.vinted.se", href)
-    title = link.get_text(" ", strip=True)
-
-    if full_url in found:
-        continue
-
-    found.add(full_url)
-
-    print("\nANNONS")
-    print("Titel:", title or "Ingen titel hittades")
-    print("Länk:", full_url)
-
-print("\nAntal unika annonslänkar:", len(found))
+    parent = link
+    for level in range(1, 4):
+        parent = parent.parent
+        if parent:
+            print(f"Föräldernivå {level}:",
+                  parent.get_text(" ", strip=True)[:500])
