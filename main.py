@@ -1,3 +1,4 @@
+
 import os
 import re
 from pathlib import Path
@@ -53,18 +54,14 @@ JACKET_SIZES = {"S", "M", "L", "XL"}
 
 
 MARKETS = [
-
-    # RALPH LAUREN HOODIES – SWEDEN
     market(
         "Ralph Lauren Sverige", "vinted.se",
         "ralph Lauren hoodie", "SEK", 199,
         ("ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt", "bluza",
-         "hættetrøje"),
+        ("hoodie", "felpa", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids.txt"
     ),
 
-    # RALPH LAUREN SWEATERS – SWEDEN
     market(
         "Ralph Lauren sweaters Sverige", "vinted.se",
         "Ralph Lauren sweater", "SEK", 199,
@@ -75,7 +72,6 @@ MARKETS = [
         SIZES, "seen_ids_rl_sweater.txt"
     ),
 
-    # HOLLISTER – SWEDEN
     market(
         "Hollister hoodies Sverige", "vinted.se",
         "Hollister hoodie", "SEK", 199,
@@ -84,7 +80,6 @@ MARKETS = [
         SIZES, "seen_ids_hollister.txt"
     ),
 
-    # SUPERDRY – SWEDEN
     market(
         "Superdry hoodies Sverige", "vinted.se",
         "Superdry hoodie", "SEK", 199,
@@ -93,28 +88,23 @@ MARKETS = [
         SIZES, "seen_ids_superdry.txt"
     ),
 
-    # RALPH LAUREN DOWN JACKETS – SWEDEN
     market(
         "Ralph Lauren dunjackor Sverige", "vinted.se",
         "Ralph Lauren down jacket", "SEK", 700,
         ("ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka", "kurtka puchowa",
-         "dunjakke"),
+         "puffer", "puffjacka", "kurtka puchowa", "dunjakke"),
         SIZES, "seen_ids_rl_down.txt"
     ),
 
-    # PATAGONIA VESTS – SWEDEN
     market(
         "Patagonia västar Sverige", "vinted.se",
         "Patagonia", "SEK", 400,
         ("patagonia",),
-        ("väst", "fleeceväst", "vest", "gilet",
-         "kamizelka"),
+        ("väst", "fleeceväst", "vest", "gilet", "kamizelka"),
         SIZES, "seen_ids_patagonia.txt"
     ),
 
-    # COLMAR – SWEDEN
     market(
         "Colmar Sverige", "vinted.se",
         "Colmar", "SEK", 300,
@@ -124,7 +114,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_colmar.txt"
     ),
 
-    # J.LINDEBERG – SWEDEN
     market(
         "J.Lindeberg Sverige", "vinted.se",
         "J.Lindeberg", "SEK", 300,
@@ -134,7 +123,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_jl.txt"
     ),
 
-    # BARBOUR JACKETS – SWEDEN
     market(
         "Barbour jackor Sverige", "vinted.se",
         "Barbour jacket", "SEK", 400,
@@ -144,7 +132,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_barbour.txt"
     ),
 
-    # CARHARTT HOODIES – SWEDEN
     market(
         "Carhartt hoodies Sverige", "vinted.se",
         "Carhartt hoodie", "SEK", 150,
@@ -153,18 +140,15 @@ MARKETS = [
         SIZES, "seen_ids_carhartt.txt"
     ),
 
-    # WOOLRICH JACKETS – SWEDEN
     market(
         "Woolrich jackor Sverige", "vinted.se",
         "Woolrich jacket", "SEK", 400,
         ("woolrich",),
         ("jacka", "jacket", "parka", "puffer",
-         "down jacket", "coat", "vinterjacka",
-         "kurtka", "jakke"),
+         "down jacket", "coat", "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_woolrich.txt"
     ),
 
-    # RALPH LAUREN HOODIES – POLAND
     market(
         "Ralph Lauren Polen", "vinted.pl",
         "ralph Lauren hoodie", "PLN", 60,
@@ -173,7 +157,6 @@ MARKETS = [
         SIZES, "seen_ids_rl_pl.txt"
     ),
 
-    # RALPH LAUREN HOODIES – DENMARK
     market(
         "Ralph Lauren Danmark", "vinted.dk",
         "ralph Lauren hoodie", "DKK", 100,
@@ -182,7 +165,6 @@ MARKETS = [
         SIZES, "seen_ids_rl_dk.txt"
     ),
 
-    # PATAGONIA VESTS – POLAND
     market(
         "Patagonia Polen", "vinted.pl",
         "Patagonia", "PLN", 200,
@@ -191,7 +173,6 @@ MARKETS = [
         SIZES, "seen_ids_patagonia_pl.txt"
     ),
 
-    # PATAGONIA VESTS – DENMARK
     market(
         "Patagonia Danmark", "vinted.dk",
         "Patagonia", "DKK", 335,
@@ -200,7 +181,6 @@ MARKETS = [
         SIZES, "seen_ids_patagonia_dk.txt"
     ),
 
-    # RALPH LAUREN DOWN JACKETS – POLAND
     market(
         "Ralph Lauren dunjackor Polen", "vinted.pl",
         "Ralph Lauren down jacket", "PLN", 320,
@@ -210,7 +190,6 @@ MARKETS = [
         SIZES, "seen_ids_rl_down_pl.txt"
     ),
 
-    # RALPH LAUREN DOWN JACKETS – DENMARK
     market(
         "Ralph Lauren dunjackor Danmark", "vinted.dk",
         "Ralph Lauren down jacket", "DKK", 535,
@@ -220,7 +199,6 @@ MARKETS = [
         SIZES, "seen_ids_rl_down_dk.txt"
     ),
 
-    # COLMAR – POLAND
     market(
         "Colmar Polen", "vinted.pl",
         "Colmar", "PLN", 100,
@@ -230,7 +208,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_colmar_pl.txt"
     ),
 
-    # COLMAR – DENMARK
     market(
         "Colmar Danmark", "vinted.dk",
         "Colmar", "DKK", 170,
@@ -240,7 +217,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_colmar_dk.txt"
     ),
 
-    # J.LINDEBERG – POLAND
     market(
         "J.Lindeberg Polen", "vinted.pl",
         "J.Lindeberg", "PLN", 100,
@@ -250,7 +226,6 @@ MARKETS = [
         JACKET_SIZES, "seen_ids_jl_pl.txt"
     ),
 
-    # J.LINDEBERG – DENMARK
     market(
         "J.Lindeberg Danmark", "vinted.dk",
         "J.Lindeberg", "DKK", 170,
@@ -367,6 +342,17 @@ def scan_market(market_config):
         )
 
         new_count = 0
+        stats = {
+            "Redan sedda": 0,
+            "Saknar annonstext": 0,
+            "Fel varumärke": 0,
+            "Fel plaggtyp": 0,
+            "Dåligt skick": 0,
+            "Pris saknas": 0,
+            "För dyr": 0,
+            "Storlek saknas": 0,
+            "Discord misslyckades": 0,
+        }
 
         for link in links:
             href = link.get("href")
@@ -387,11 +373,13 @@ def scan_market(market_config):
             item_id = item_id_match.group(1)
 
             if item_id in seen:
+                stats["Redan sedda"] += 1
                 continue
 
             text = link.get_text(" ", strip=True)
 
             if not text:
+                stats["Saknar annonstext"] += 1
                 continue
 
             text_lower = text.lower()
@@ -400,20 +388,28 @@ def scan_market(market_config):
                 brand in text_lower
                 for brand in market_config["brands"]
             ):
+                stats["Fel varumärke"] += 1
                 continue
 
             if not any(
                 keyword in text_lower
                 for keyword in market_config["keywords"]
             ):
+                stats["Fel plaggtyp"] += 1
                 continue
 
             if has_bad_condition(text_lower):
+                stats["Dåligt skick"] += 1
                 continue
 
             price = parse_price(text)
 
-            if price is None or price > market_config["limit"]:
+            if price is None:
+                stats["Pris saknas"] += 1
+                continue
+
+            if price > market_config["limit"]:
+                stats["För dyr"] += 1
                 continue
 
             detected_size = None
@@ -428,6 +424,7 @@ def scan_market(market_config):
                     break
 
             if detected_size is None:
+                stats["Storlek saknas"] += 1
                 continue
 
             item = {
@@ -447,17 +444,21 @@ def scan_market(market_config):
                 item["size"]
             )
 
-            # Markera annonsen som sedd ENDAST om Discord skickade notisen.
             if send_discord(item):
                 seen.add(item_id)
                 new_count += 1
             else:
+                stats["Discord misslyckades"] += 1
                 print(
                     f"⚠️ Annons {item_id} sparas inte som sedd. "
                     "Den försöks igen vid nästa körning."
                 )
 
         save_seen(market_config["state"], seen)
+
+        print("📊 FELSÖKNINGSSTATISTIK:")
+        for reason, count in stats.items():
+            print(f"   {reason}: {count}")
 
         print(
             f"Klart: {market_config['name']} | "
