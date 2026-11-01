@@ -55,17 +55,17 @@ JACKET_SIZES = {"S", "M", "L", "XL"}
 
 MARKETS = [
     market(
-        "Ralph Lauren Sverige", "vinted.se",
-        "ralph Lauren hoodie", "SEK", 199,
-        ("ralph lauren",),
+        "Polo Ralph Lauren Sverige", "vinted.se",
+        "Polo Ralph Lauren hoodie", "SEK", 199,
+        ("polo ralph lauren",),
         ("hoodie", "felpa", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids.txt"
     ),
 
     market(
-        "Ralph Lauren sweaters Sverige", "vinted.se",
-        "Ralph Lauren sweater", "SEK", 199,
-        ("ralph lauren",),
+        "Polo Ralph Lauren sweaters Sverige", "vinted.se",
+        "Polo Ralph Lauren sweater", "SEK", 199,
+        ("polo ralph lauren",),
         ("sweater", "jumper", "knit", "knitwear",
          "stickad", "tröja", "pullover", "sweter",
          "dzianinowy", "trøje"),
@@ -89,9 +89,9 @@ MARKETS = [
     ),
 
     market(
-        "Ralph Lauren dunjackor Sverige", "vinted.se",
-        "Ralph Lauren down jacket", "SEK", 700,
-        ("ralph lauren",),
+        "Polo Ralph Lauren dunjackor Sverige", "vinted.se",
+        "Polo Ralph Lauren down jacket", "SEK", 700,
+        ("polo ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
          "puffer", "puffjacka", "kurtka puchowa", "dunjakke"),
         SIZES, "seen_ids_rl_down.txt"
@@ -150,17 +150,17 @@ MARKETS = [
     ),
 
     market(
-        "Ralph Lauren Polen", "vinted.pl",
-        "ralph Lauren hoodie", "PLN", 60,
-        ("ralph lauren",),
+        "Polo Ralph Lauren Polen", "vinted.pl",
+        "Polo Ralph Lauren hoodie", "PLN", 60,
+        ("polo ralph lauren",),
         ("hoodie", "felpa", "sweatshirt", "bluza"),
         SIZES, "seen_ids_rl_pl.txt"
     ),
 
     market(
-        "Ralph Lauren Danmark", "vinted.dk",
-        "ralph Lauren hoodie", "DKK", 100,
-        ("ralph lauren",),
+        "Polo Ralph Lauren Danmark", "vinted.dk",
+        "Polo Ralph Lauren hoodie", "DKK", 100,
+        ("polo ralph lauren",),
         ("hoodie", "felpa", "sweatshirt", "hættetrøje"),
         SIZES, "seen_ids_rl_dk.txt"
     ),
@@ -182,18 +182,18 @@ MARKETS = [
     ),
 
     market(
-        "Ralph Lauren dunjackor Polen", "vinted.pl",
-        "Ralph Lauren down jacket", "PLN", 320,
-        ("ralph lauren",),
+        "Polo Ralph Lauren dunjackor Polen", "vinted.pl",
+        "Polo Ralph Lauren down jacket", "PLN", 320,
+        ("polo ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
          "puffer", "puffjacka", "kurtka puchowa"),
         SIZES, "seen_ids_rl_down_pl.txt"
     ),
 
     market(
-        "Ralph Lauren dunjackor Danmark", "vinted.dk",
-        "Ralph Lauren down jacket", "DKK", 535,
-        ("ralph lauren",),
+        "Polo Ralph Lauren dunjackor Danmark", "vinted.dk",
+        "Polo Ralph Lauren down jacket", "DKK", 535,
+        ("polo ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
          "puffer", "puffjacka", "dunjakke"),
         SIZES, "seen_ids_rl_down_dk.txt"
