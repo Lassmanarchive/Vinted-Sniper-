@@ -16,508 +16,243 @@ HEADERS = {
     )
 }
 
-
 BAD_CONDITION_TERMS = (
-    "trasig",
-    "sönder",
-    "defekt",
-    "fläck",
-    "fläckig",
-    "missfärg",
-    "hål",
-    "reva",
-    "sliten",
-    "slitage",
-    "noppig",
-    "noppor",
-    "skada",
-    "skadat",
-    "broken",
-    "damaged",
-    "stain",
-    "stained",
-    "discolor",
-    "hole",
-    "tear",
-    "worn",
-    "damaged",
-    "pilling",
-    "uszkodz",
-    "plama",
-    "dziura",
-    "rozdar",
-    "zuży",
-    "plet",
-    "hullet",
-    "revet",
-    "slidt",
-    "fläckar",
+    "trasig", "sönder", "defekt", "fläck", "fläckig",
+    "missfärg", "hål", "reva", "sliten", "slitage",
+    "noppig", "noppor", "skada", "skadat", "broken",
+    "damaged", "stain", "stained", "discolor", "hole",
+    "tear", "worn", "pilling", "uszkodz", "plama",
+    "dziura", "rozdar", "zuży", "plet", "hullet",
+    "revet", "slidt",
 )
 
 
+def market(name, domain, search, currency, limit, brands,
+           keywords, sizes, state):
+    return {
+        "name": name,
+        "base": f"https://www.{domain}",
+        "url": (
+            f"https://www.{domain}/catalog?"
+            f"search_text={requests.utils.quote(search)}"
+            f"&price_to={limit:.2f}"
+            f"&currency={currency}"
+            f"&order=newest_first"
+        ),
+        "brands": brands,
+        "keywords": keywords,
+        "sizes": sizes,
+        "limit": limit,
+        "currency": "kr" if currency in ("SEK", "DKK") else "zł",
+        "state": Path(state),
+    }
+
+
+SIZES = {"S", "M", "L", "XL"}
+JACKET_SIZES = {"S", "M", "L", "XL"}
+
 MARKETS = [
-    # =========================
+
     # RALPH LAUREN – SWEDEN
-    # =========================
-    {
-        "name": "Ralph Lauren Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=ralph%20Lauren%20hoodie"
-            "&price_to=199.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": ("hoodie", "felpa", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 199,
-        "currency": "kr",
-        "state": Path("seen_ids.txt"),
-    },
+    market(
+        "Ralph Lauren Sverige", "vinted.se",
+        "ralph Lauren hoodie", "SEK", 199,
+        ("ralph lauren",),
+        ("hoodie", "felpa", "sweatshirt"),
+        SIZES, "seen_ids.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN – SWEATERS
-    # =========================
-    {
-        "name": "Ralph Lauren sweaters Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Ralph%20Lauren%20sweater"
-            "&price_to=199.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": (
-            "sweater",
-            "jumper",
-            "knit",
-            "knitwear",
-            "stickad",
-            "tröja",
-            "pullover",
-        ),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 199,
-        "currency": "kr",
-        "state": Path("seen_ids_rl_sweater.txt"),
-    },
+    # RALPH LAUREN SWEATERS – SWEDEN
+    market(
+        "Ralph Lauren sweaters Sverige", "vinted.se",
+        "Ralph Lauren sweater", "SEK", 199,
+        ("ralph lauren",),
+        ("sweater", "jumper", "knit", "knitwear",
+         "stickad", "tröja", "pullover"),
+        SIZES, "seen_ids_rl_sweater.txt"
+    ),
 
-    # =========================
     # HOLLISTER – SWEDEN
-    # =========================
-    {
-        "name": "Hollister hoodies Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Hollister%20hoodie"
-            "&price_to=199.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("hollister",),
-        "keywords": ("hoodie", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 199,
-        "currency": "kr",
-        "state": Path("seen_ids_hollister.txt"),
-    },
+    market(
+        "Hollister hoodies Sverige", "vinted.se",
+        "Hollister hoodie", "SEK", 199,
+        ("hollister",),
+        ("hoodie", "sweatshirt"),
+        SIZES, "seen_ids_hollister.txt"
+    ),
 
-    # =========================
     # SUPERDRY – SWEDEN
-    # =========================
-    {
-        "name": "Superdry hoodies Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Superdry%20hoodie"
-            "&price_to=199.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("superdry",),
-        "keywords": ("hoodie", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 199,
-        "currency": "kr",
-        "state": Path("seen_ids_superdry.txt"),
-    },
+    market(
+        "Superdry hoodies Sverige", "vinted.se",
+        "Superdry hoodie", "SEK", 199,
+        ("superdry",),
+        ("hoodie", "sweatshirt"),
+        SIZES, "seen_ids_superdry.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN – DUNJACKOR
-    # =========================
-    {
-        "name": "Ralph Lauren dunjackor Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Ralph%20Lauren%20down%20jacket"
-            "&price_to=700.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": (
-            "dunjacka",
-            "dun",
-            "down jacket",
-            "down coat",
-            "puffer",
-            "puffjacka",
-        ),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 700,
-        "currency": "kr",
-        "state": Path("seen_ids_rl_down.txt"),
-    },
+    # RALPH LAUREN DOWN JACKETS – SWEDEN
+    market(
+        "Ralph Lauren dunjackor Sverige", "vinted.se",
+        "Ralph Lauren down jacket", "SEK", 700,
+        ("ralph lauren",),
+        ("dunjacka", "dun", "down jacket", "down coat",
+         "puffer", "puffjacka"),
+        SIZES, "seen_ids_rl_down.txt"
+    ),
 
-    # =========================
-    # PATAGONIA – VÄSTAR
-    # =========================
-    {
-        "name": "Patagonia västar Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Patagonia"
-            "&price_to=400.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("patagonia",),
-        "keywords": (
-            "väst",
-            "fleeceväst",
-            "vest",
-            "gilet",
-        ),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 400,
-        "currency": "kr",
-        "state": Path("seen_ids_patagonia.txt"),
-    },
+    # PATAGONIA VESTS – SWEDEN
+    market(
+        "Patagonia västar Sverige", "vinted.se",
+        "Patagonia", "SEK", 400,
+        ("patagonia",),
+        ("väst", "fleeceväst", "vest", "gilet"),
+        SIZES, "seen_ids_patagonia.txt"
+    ),
 
-    # =========================
     # COLMAR – SWEDEN
-    # =========================
-    {
-        "name": "Colmar Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=Colmar"
-            "&price_to=300.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": ("colmar",),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 300,
-        "currency": "kr",
-        "state": Path("seen_ids_colmar.txt"),
-    },
+    market(
+        "Colmar Sverige", "vinted.se",
+        "Colmar", "SEK", 300,
+        ("colmar",),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka"),
+        JACKET_SIZES, "seen_ids_colmar.txt"
+    ),
 
-    # =========================
     # J.LINDEBERG – SWEDEN
-    # =========================
-    {
-        "name": "J.Lindeberg Sverige",
-        "base": "https://www.vinted.se",
-        "url": (
-            "https://www.vinted.se/catalog?"
-            "search_text=J.Lindeberg"
-            "&price_to=300.00"
-            "&currency=SEK"
-            "&order=newest_first"
-        ),
-        "brands": (
-            "j.lindeberg",
-            "j lindeberg",
-            "jlindeberg",
-        ),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-            "coat",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 300,
-        "currency": "kr",
-        "state": Path("seen_ids_jl.txt"),
-    },
+    market(
+        "J.Lindeberg Sverige", "vinted.se",
+        "J.Lindeberg", "SEK", 300,
+        ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka", "coat"),
+        JACKET_SIZES, "seen_ids_jl.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN – POLEN
-    # =========================
-    {
-        "name": "Ralph Lauren Polen",
-        "base": "https://www.vinted.pl",
-        "url": (
-            "https://www.vinted.pl/catalog?"
-            "search_text=ralph%20Lauren%20hoodie"
-            "&price_to=60.00"
-            "&currency=PLN"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": ("hoodie", "felpa", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 60,
-        "currency": "zł",
-        "state": Path("seen_ids_rl_pl.txt"),
-    },
+    # BARBOUR JACKETS – SWEDEN
+    market(
+        "Barbour jackor Sverige", "vinted.se",
+        "Barbour jacket", "SEK", 400,
+        ("barbour",),
+        ("jacka", "jacket", "quilted", "wax jacket",
+         "vinterjacka", "coat"),
+        JACKET_SIZES, "seen_ids_barbour.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN – DANMARK
-    # =========================
-    {
-        "name": "Ralph Lauren Danmark",
-        "base": "https://www.vinted.dk",
-        "url": (
-            "https://www.vinted.dk/catalog?"
-            "search_text=ralph%20Lauren%20hoodie"
-            "&price_to=100.00"
-            "&currency=DKK"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": ("hoodie", "felpa", "sweatshirt"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 100,
-        "currency": "kr",
-        "state": Path("seen_ids_rl_dk.txt"),
-    },
+    # CARHARTT HOODIES – SWEDEN
+    market(
+        "Carhartt hoodies Sverige", "vinted.se",
+        "Carhartt hoodie", "SEK", 150,
+        ("carhartt", "carhartt wip"),
+        ("hoodie", "sweatshirt"),
+        SIZES, "seen_ids_carhartt.txt"
+    ),
 
-    # =========================
-    # PATAGONIA – POLEN
-    # =========================
-    {
-        "name": "Patagonia Polen",
-        "base": "https://www.vinted.pl",
-        "url": (
-            "https://www.vinted.pl/catalog?"
-            "search_text=Patagonia"
-            "&price_to=200.00"
-            "&currency=PLN"
-            "&order=newest_first"
-        ),
-        "brands": ("patagonia",),
-        "keywords": ("vest", "gilet", "fleece", "väst"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 200,
-        "currency": "zł",
-        "state": Path("seen_ids_patagonia_pl.txt"),
-    },
+    # WOOLRICH JACKETS – SWEDEN
+    market(
+        "Woolrich jackor Sverige", "vinted.se",
+        "Woolrich jacket", "SEK", 400,
+        ("woolrich",),
+        ("jacka", "jacket", "parka", "puffer",
+         "down jacket", "coat", "vinterjacka"),
+        JACKET_SIZES, "seen_ids_woolrich.txt"
+    ),
 
-    # =========================
-    # PATAGONIA – DANMARK
-    # =========================
-    {
-        "name": "Patagonia Danmark",
-        "base": "https://www.vinted.dk",
-        "url": (
-            "https://www.vinted.dk/catalog?"
-            "search_text=Patagonia"
-            "&price_to=335.00"
-            "&currency=DKK"
-            "&order=newest_first"
-        ),
-        "brands": ("patagonia",),
-        "keywords": ("vest", "gilet", "fleece", "väst"),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 335,
-        "currency": "kr",
-        "state": Path("seen_ids_patagonia_dk.txt"),
-    },
+    # RALPH LAUREN – POLAND
+    market(
+        "Ralph Lauren Polen", "vinted.pl",
+        "ralph Lauren hoodie", "PLN", 60,
+        ("ralph lauren",),
+        ("hoodie", "felpa", "sweatshirt"),
+        SIZES, "seen_ids_rl_pl.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN DUN – POLEN
-    # =========================
-    {
-        "name": "Ralph Lauren dunjackor Polen",
-        "base": "https://www.vinted.pl",
-        "url": (
-            "https://www.vinted.pl/catalog?"
-            "search_text=Ralph%20Lauren%20down%20jacket"
-            "&price_to=320.00"
-            "&currency=PLN"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": (
-            "dunjacka",
-            "dun",
-            "down jacket",
-            "down coat",
-            "puffer",
-            "puffjacka",
-        ),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 320,
-        "currency": "zł",
-        "state": Path("seen_ids_rl_down_pl.txt"),
-    },
+    # RALPH LAUREN – DENMARK
+    market(
+        "Ralph Lauren Danmark", "vinted.dk",
+        "ralph Lauren hoodie", "DKK", 100,
+        ("ralph lauren",),
+        ("hoodie", "felpa", "sweatshirt"),
+        SIZES, "seen_ids_rl_dk.txt"
+    ),
 
-    # =========================
-    # RALPH LAUREN DUN – DANMARK
-    # =========================
-    {
-        "name": "Ralph Lauren dunjackor Danmark",
-        "base": "https://www.vinted.dk",
-        "url": (
-            "https://www.vinted.dk/catalog?"
-            "search_text=Ralph%20Lauren%20down%20jacket"
-            "&price_to=535.00"
-            "&currency=DKK"
-            "&order=newest_first"
-        ),
-        "brands": ("ralph lauren",),
-        "keywords": (
-            "dunjacka",
-            "dun",
-            "down jacket",
-            "down coat",
-            "puffer",
-            "puffjacka",
-        ),
-        "sizes": {"S", "M", "L", "XL"},
-        "limit": 535,
-        "currency": "kr",
-        "state": Path("seen_ids_rl_down_dk.txt"),
-    },
+    # PATAGONIA – POLAND
+    market(
+        "Patagonia Polen", "vinted.pl",
+        "Patagonia", "PLN", 200,
+        ("patagonia",),
+        ("vest", "gilet", "fleece", "väst"),
+        SIZES, "seen_ids_patagonia_pl.txt"
+    ),
 
-    # =========================
-    # COLMAR – POLEN
-    # =========================
-    {
-        "name": "Colmar Polen",
-        "base": "https://www.vinted.pl",
-        "url": (
-            "https://www.vinted.pl/catalog?"
-            "search_text=Colmar"
-            "&price_to=100.00"
-            "&currency=PLN"
-            "&order=newest_first"
-        ),
-        "brands": ("colmar",),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 100,
-        "currency": "zł",
-        "state": Path("seen_ids_colmar_pl.txt"),
-    },
+    # PATAGONIA – DENMARK
+    market(
+        "Patagonia Danmark", "vinted.dk",
+        "Patagonia", "DKK", 335,
+        ("patagonia",),
+        ("vest", "gilet", "fleece", "väst"),
+        SIZES, "seen_ids_patagonia_dk.txt"
+    ),
 
-    # =========================
-    # COLMAR – DANMARK
-    # =========================
-    {
-        "name": "Colmar Danmark",
-        "base": "https://www.vinted.dk",
-        "url": (
-            "https://www.vinted.dk/catalog?"
-            "search_text=Colmar"
-            "&price_to=170.00"
-            "&currency=DKK"
-            "&order=newest_first"
-        ),
-        "brands": ("colmar",),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 170,
-        "currency": "kr",
-        "state": Path("seen_ids_colmar_dk.txt"),
-    },
+    # RALPH LAUREN DOWN – POLAND
+    market(
+        "Ralph Lauren dunjackor Polen", "vinted.pl",
+        "Ralph Lauren down jacket", "PLN", 320,
+        ("ralph lauren",),
+        ("dunjacka", "dun", "down jacket", "down coat",
+         "puffer", "puffjacka"),
+        SIZES, "seen_ids_rl_down_pl.txt"
+    ),
 
-    # =========================
-    # J.LINDEBERG – POLEN
-    # =========================
-    {
-        "name": "J.Lindeberg Polen",
-        "base": "https://www.vinted.pl",
-        "url": (
-            "https://www.vinted.pl/catalog?"
-            "search_text=J.Lindeberg"
-            "&price_to=100.00"
-            "&currency=PLN"
-            "&order=newest_first"
-        ),
-        "brands": (
-            "j.lindeberg",
-            "j lindeberg",
-            "jlindeberg",
-        ),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-            "coat",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 100,
-        "currency": "zł",
-        "state": Path("seen_ids_jl_pl.txt"),
-    },
+    # RALPH LAUREN DOWN – DENMARK
+    market(
+        "Ralph Lauren dunjackor Danmark", "vinted.dk",
+        "Ralph Lauren down jacket", "DKK", 535,
+        ("ralph lauren",),
+        ("dunjacka", "dun", "down jacket", "down coat",
+         "puffer", "puffjacka"),
+        SIZES, "seen_ids_rl_down_dk.txt"
+    ),
 
-    # =========================
-    # J.LINDEBERG – DANMARK
-    # =========================
-    {
-        "name": "J.Lindeberg Danmark",
-        "base": "https://www.vinted.dk",
-        "url": (
-            "https://www.vinted.dk/catalog?"
-            "search_text=J.Lindeberg"
-            "&price_to=170.00"
-            "&currency=DKK"
-            "&order=newest_first"
-        ),
-        "brands": (
-            "j.lindeberg",
-            "j lindeberg",
-            "jlindeberg",
-        ),
-        "keywords": (
-            "jacka",
-            "jacket",
-            "puffer",
-            "dunjacka",
-            "vinterjacka",
-            "coat",
-        ),
-        "sizes": {"S", "M", "L"},
-        "limit": 170,
-        "currency": "kr",
-        "state": Path("seen_ids_jl_dk.txt"),
-    },
+    # COLMAR – POLAND
+    market(
+        "Colmar Polen", "vinted.pl",
+        "Colmar", "PLN", 100,
+        ("colmar",),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka"),
+        JACKET_SIZES, "seen_ids_colmar_pl.txt"
+    ),
+
+    # COLMAR – DENMARK
+    market(
+        "Colmar Danmark", "vinted.dk",
+        "Colmar", "DKK", 170,
+        ("colmar",),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka"),
+        JACKET_SIZES, "seen_ids_colmar_dk.txt"
+    ),
+
+    # J.LINDEBERG – POLAND
+    market(
+        "J.Lindeberg Polen", "vinted.pl",
+        "J.Lindeberg", "PLN", 100,
+        ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka", "coat"),
+        JACKET_SIZES, "seen_ids_jl_pl.txt"
+    ),
+
+    # J.LINDEBERG – DENMARK
+    market(
+        "J.Lindeberg Danmark", "vinted.dk",
+        "J.Lindeberg", "DKK", 170,
+        ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        ("jacka", "jacket", "puffer", "dunjacka",
+         "vinterjacka", "coat"),
+        JACKET_SIZES, "seen_ids_jl_dk.txt"
+    ),
 ]
 
 
@@ -525,9 +260,7 @@ def parse_price(text):
     if not text:
         return None
 
-    text = text.replace("\xa0", " ")
-    text = text.replace(",", ".")
-
+    text = text.replace("\xa0", " ").replace(",", ".")
     matches = re.findall(r"\d+(?:\.\d+)?", text)
 
     if not matches:
@@ -541,7 +274,6 @@ def parse_price(text):
 
 def has_bad_condition(text):
     text = text.lower()
-
     return any(term in text for term in BAD_CONDITION_TERMS)
 
 
@@ -558,7 +290,7 @@ def load_seen(path):
 def save_seen(path, seen):
     path.write_text(
         "\n".join(sorted(seen)),
-        encoding="utf-8",
+        encoding="utf-8"
     )
 
 
@@ -582,50 +314,45 @@ def send_discord(item):
         response = requests.post(
             DISCORD_WEBHOOK,
             json=payload,
-            timeout=20,
+            timeout=20
         )
 
         if response.status_code not in (200, 204):
             print(
                 "Discord-fel:",
                 response.status_code,
-                response.text[:300],
+                response.text[:300]
             )
 
     except Exception as exc:
         print("Discord exception:", exc)
 
 
-def scan_market(market):
-    print(f"\n🔎 {market['name']}")
+def scan_market(market_config):
+    print(f"\n🔎 {market_config['name']}")
 
     try:
         response = requests.get(
-            market["url"],
+            market_config["url"],
             headers=HEADERS,
-            timeout=30,
+            timeout=30
         )
 
         print(
             f"HTTP {response.status_code} | "
-            f"{market['name']}"
+            f"{market_config['name']}"
         )
 
         if response.status_code != 200:
             return
 
-        soup = BeautifulSoup(
-            response.text,
-            "html.parser",
-        )
-
-        seen = load_seen(market["state"])
-
+        soup = BeautifulSoup(response.text, "html.parser")
+        seen = load_seen(market_config["state"])
         links = soup.select('a[href*="/items/"]')
 
         print(
             f"Hittade {len(links)} möjliga annonser "
-            f"på {market['name']}"
+            f"på {market_config['name']}"
         )
 
         new_count = 0
@@ -637,14 +364,11 @@ def scan_market(market):
                 continue
 
             if href.startswith("/"):
-                item_url = market["base"] + href
+                item_url = market_config["base"] + href
             else:
                 item_url = href
 
-            item_id_match = re.search(
-                r"/items/(\d+)",
-                item_url,
-            )
+            item_id_match = re.search(r"/items/(\d+)", item_url)
 
             if not item_id_match:
                 continue
@@ -654,51 +378,40 @@ def scan_market(market):
             if item_id in seen:
                 continue
 
-            text = link.get_text(
-                " ",
-                strip=True,
-            )
+            text = link.get_text(" ", strip=True)
 
             if not text:
                 continue
 
             text_lower = text.lower()
 
-            # Brand
             if not any(
                 brand in text_lower
-                for brand in market["brands"]
+                for brand in market_config["brands"]
             ):
                 continue
 
-            # Keywords
             if not any(
                 keyword in text_lower
-                for keyword in market["keywords"]
+                for keyword in market_config["keywords"]
             ):
                 continue
 
-            # Bad condition
             if has_bad_condition(text_lower):
                 continue
 
-            # Price
             price = parse_price(text)
 
-            if price is None:
+            if price is None or price > market_config["limit"]:
                 continue
 
-            if price > market["limit"]:
-                continue
-
-            # Size
             detected_size = None
 
-            for size in market["sizes"]:
+            for size in market_config["sizes"]:
                 if re.search(
                     rf"(?<![A-Za-z]){re.escape(size)}(?![A-Za-z])",
                     text,
-                    re.IGNORECASE,
+                    re.IGNORECASE
                 ):
                     detected_size = size
                     break
@@ -708,9 +421,11 @@ def scan_market(market):
 
             item = {
                 "title": text[:200],
-                "price": f"{price:g} {market['currency']}",
+                "price": (
+                    f"{price:g} {market_config['currency']}"
+                ),
                 "size": detected_size,
-                "market": market["name"],
+                "market": market_config["name"],
                 "url": item_url,
             }
 
@@ -720,7 +435,7 @@ def scan_market(market):
                 "|",
                 item["price"],
                 "|",
-                item["size"],
+                item["size"]
             )
 
             send_discord(item)
@@ -728,16 +443,16 @@ def scan_market(market):
             seen.add(item_id)
             new_count += 1
 
-        save_seen(market["state"], seen)
+        save_seen(market_config["state"], seen)
 
         print(
-            f"Klart: {market['name']} | "
+            f"Klart: {market_config['name']} | "
             f"Nya träffar: {new_count}"
         )
 
     except Exception as exc:
         print(
-            f"❌ Fel i {market['name']}: {exc}"
+            f"❌ Fel i {market_config['name']}: {exc}"
         )
 
 
@@ -745,8 +460,8 @@ def main():
     print("🚀 Vinted Sniper startar...")
     print(f"Antal marknader: {len(MARKETS)}")
 
-    for market in MARKETS:
-        scan_market(market)
+    for market_config in MARKETS:
+        scan_market(market_config)
 
     print("\n✅ Bevakningen är klar.")
 
