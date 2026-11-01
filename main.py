@@ -1,4 +1,3 @@
-
 import os
 import re
 from pathlib import Path
@@ -45,6 +44,7 @@ def market(name, domain, search, currency, limit, brands,
         "sizes": sizes,
         "limit": limit,
         "currency": "kr" if currency in ("SEK", "DKK") else "zł",
+        "currency_code": currency,
         "state": Path(state),
     }
 
@@ -237,12 +237,24 @@ MARKETS = [
 ]
 
 
-def parse_price(text):
+def parse_price(text, currency_code):
+    """Hitta ett pris med rätt valuta i annonstexten."""
     if not text:
         return None
 
-    text = text.replace("\xa0", " ").replace(",", ".")
-    matches = re.findall(r"\d+(?:\.\d+)?", text)
+    normalized = text.replace("\xa0", " ").replace("\u202f", " ")
+    normalized = normalized.replace(",", ".")
+
+    if currency_code in ("SEK", "DKK"):
+        suffix = r"(?:kr\.?|SEK)"
+    else:
+        suffix = r"(?:zł|PLN)"
+
+    matches = re.findall(
+        rf"(\d+(?:\.\d{{1,2}})?)\s*{suffix}",
+        normalized,
+        flags=re.IGNORECASE
+    )
 
     if not matches:
         return None
@@ -251,6 +263,67 @@ def parse_price(text):
         return float(matches[0])
     except ValueError:
         return None
+
+
+def listing_card_text(link):
+    """
+    Försök läsa information från hela annonskortet.
+    Vinted kan lägga titel och pris utanför själva länken.
+    """
+    pieces = []
+
+    # Börja med själva länken och dess bilder/etiketter.
+    for node in [link, *link.select("img, [aria-label], [title]")]:
+        for attr in ("aria-label", "title", "alt"):
+            value = node.get(attr)
+            if value:
+                pieces.append(value)
+
+        visible = node.get_text(" ", strip=True)
+        if visible:
+            pieces.append(visible)
+
+    # Gå upp genom HTML-strukturen och leta efter annonskortet.
+    current = link
+
+    for _ in range(6):
+        current = current.parent
+
+        if current is None:
+            break
+
+        item_links = set()
+
+        for anchor in current.select('a[href*="/items/"]'):
+            match = re.search(r"/items/(\d+)", anchor.get("href", ""))
+
+            if match:
+                item_links.add(match.group(1))
+
+        # Om föräldern innehåller flera annonser går vi vidare uppåt.
+        if len(item_links) > 1:
+            continue
+
+        card_parts = [current.get_text(" ", strip=True)]
+
+        for node in current.select("img, [aria-label], [title]"):
+            for attr in ("aria-label", "title", "alt"):
+                value = node.get(attr)
+
+                if value:
+                    card_parts.append(value)
+
+        candidate = " ".join(
+            part for part in card_parts if part
+        )
+        candidate = re.sub(r"\s+", " ", candidate).strip()
+
+        if len(candidate) >= 8:
+            pieces.append(candidate)
+            break
+
+    result = " ".join(dict.fromkeys(pieces))
+    return re.sub(r"\s+", " ", result).strip()
 
 
 def has_bad_condition(text):
@@ -342,6 +415,7 @@ def scan_market(market_config):
         )
 
         new_count = 0
+
         stats = {
             "Redan sedda": 0,
             "Saknar annonstext": 0,
@@ -376,7 +450,8 @@ def scan_market(market_config):
                 stats["Redan sedda"] += 1
                 continue
 
-            text = link.get_text(" ", strip=True)
+            # Läs annonskortet i stället för bara länktexten.
+            text = listing_card_text(link)
 
             if not text:
                 stats["Saknar annonstext"] += 1
@@ -402,7 +477,10 @@ def scan_market(market_config):
                 stats["Dåligt skick"] += 1
                 continue
 
-            price = parse_price(text)
+            price = parse_price(
+                text,
+                market_config["currency_code"]
+            )
 
             if price is None:
                 stats["Pris saknas"] += 1
@@ -457,6 +535,7 @@ def scan_market(market_config):
         save_seen(market_config["state"], seen)
 
         print("📊 FELSÖKNINGSSTATISTIK:")
+
         for reason, count in stats.items():
             print(f"   {reason}: {count}")
 
@@ -483,4 +562,3 @@ def main():
 
 if __name__ == "__main__":
     main()
- 
