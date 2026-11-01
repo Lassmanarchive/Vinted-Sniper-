@@ -27,23 +27,26 @@ jobs:
         with:
           path: |
             seen_ids.txt
+            seen_ids_rl_sweater.txt
+            seen_ids_hollister.txt
+            seen_ids_superdry.txt
+            seen_ids_rl_down.txt
+            seen_ids_patagonia.txt
             seen_ids_colmar.txt
             seen_ids_jl.txt
+            seen_ids_barbour.txt
+            seen_ids_carhartt.txt
+            seen_ids_woolrich.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
+            seen_ids_patagonia_pl.txt
+            seen_ids_patagonia_dk.txt
+            seen_ids_rl_down_pl.txt
+            seen_ids_rl_down_dk.txt
             seen_ids_colmar_pl.txt
             seen_ids_colmar_dk.txt
             seen_ids_jl_pl.txt
             seen_ids_jl_dk.txt
-            seen_ids_patagonia.txt
-            seen_ids_patagonia_pl.txt
-            seen_ids_patagonia_dk.txt
-            seen_ids_rl_down.txt
-            seen_ids_rl_down_pl.txt
-            seen_ids_rl_down_dk.txt
-            seen_ids_hollister.txt
-            seen_ids_rl_sweater.txt
-            seen_ids_superdry.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -59,21 +62,24 @@ jobs:
         with:
           path: |
             seen_ids.txt
+            seen_ids_rl_sweater.txt
+            seen_ids_hollister.txt
+            seen_ids_superdry.txt
+            seen_ids_rl_down.txt
+            seen_ids_patagonia.txt
             seen_ids_colmar.txt
             seen_ids_jl.txt
+            seen_ids_barbour.txt
+            seen_ids_carhartt.txt
+            seen_ids_woolrich.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
+            seen_ids_patagonia_pl.txt
+            seen_ids_patagonia_dk.txt
+            seen_ids_rl_down_pl.txt
+            seen_ids_rl_down_dk.txt
             seen_ids_colmar_pl.txt
             seen_ids_colmar_dk.txt
             seen_ids_jl_pl.txt
             seen_ids_jl_dk.txt
-            seen_ids_patagonia.txt
-            seen_ids_patagonia_pl.txt
-            seen_ids_patagonia_dk.txt
-            seen_ids_rl_down.txt
-            seen_ids_rl_down_pl.txt
-            seen_ids_rl_down_dk.txt
-            seen_ids_hollister.txt
-            seen_ids_rl_sweater.txt
-            seen_ids_superdry.txt
           key: vinted-seen-${{ github.run_id }}
