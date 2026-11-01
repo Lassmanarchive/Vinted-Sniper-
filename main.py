@@ -51,14 +51,16 @@ def market(name, domain, search, currency, limit, brands,
 SIZES = {"S", "M", "L", "XL"}
 JACKET_SIZES = {"S", "M", "L", "XL"}
 
+
 MARKETS = [
 
-    # RALPH LAUREN – SWEDEN
+    # RALPH LAUREN HOODIES – SWEDEN
     market(
         "Ralph Lauren Sverige", "vinted.se",
         "ralph Lauren hoodie", "SEK", 199,
         ("ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt"),
+        ("hoodie", "felpa", "sweatshirt", "bluza",
+         "hættetrøje"),
         SIZES, "seen_ids.txt"
     ),
 
@@ -68,7 +70,8 @@ MARKETS = [
         "Ralph Lauren sweater", "SEK", 199,
         ("ralph lauren",),
         ("sweater", "jumper", "knit", "knitwear",
-         "stickad", "tröja", "pullover"),
+         "stickad", "tröja", "pullover", "sweter",
+         "dzianinowy", "trøje"),
         SIZES, "seen_ids_rl_sweater.txt"
     ),
 
@@ -77,7 +80,7 @@ MARKETS = [
         "Hollister hoodies Sverige", "vinted.se",
         "Hollister hoodie", "SEK", 199,
         ("hollister",),
-        ("hoodie", "sweatshirt"),
+        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_hollister.txt"
     ),
 
@@ -86,7 +89,7 @@ MARKETS = [
         "Superdry hoodies Sverige", "vinted.se",
         "Superdry hoodie", "SEK", 199,
         ("superdry",),
-        ("hoodie", "sweatshirt"),
+        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_superdry.txt"
     ),
 
@@ -96,7 +99,8 @@ MARKETS = [
         "Ralph Lauren down jacket", "SEK", 700,
         ("ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka"),
+         "puffer", "puffjacka", "kurtka puchowa",
+         "dunjakke"),
         SIZES, "seen_ids_rl_down.txt"
     ),
 
@@ -105,7 +109,8 @@ MARKETS = [
         "Patagonia västar Sverige", "vinted.se",
         "Patagonia", "SEK", 400,
         ("patagonia",),
-        ("väst", "fleeceväst", "vest", "gilet"),
+        ("väst", "fleeceväst", "vest", "gilet",
+         "kamizelka"),
         SIZES, "seen_ids_patagonia.txt"
     ),
 
@@ -115,7 +120,7 @@ MARKETS = [
         "Colmar", "SEK", 300,
         ("colmar",),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka"),
+         "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar.txt"
     ),
 
@@ -125,7 +130,7 @@ MARKETS = [
         "J.Lindeberg", "SEK", 300,
         ("j.lindeberg", "j lindeberg", "jlindeberg"),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat"),
+         "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_jl.txt"
     ),
 
@@ -135,7 +140,7 @@ MARKETS = [
         "Barbour jacket", "SEK", 400,
         ("barbour",),
         ("jacka", "jacket", "quilted", "wax jacket",
-         "vinterjacka", "coat"),
+         "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_barbour.txt"
     ),
 
@@ -144,7 +149,7 @@ MARKETS = [
         "Carhartt hoodies Sverige", "vinted.se",
         "Carhartt hoodie", "SEK", 150,
         ("carhartt", "carhartt wip"),
-        ("hoodie", "sweatshirt"),
+        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_carhartt.txt"
     ),
 
@@ -154,38 +159,39 @@ MARKETS = [
         "Woolrich jacket", "SEK", 400,
         ("woolrich",),
         ("jacka", "jacket", "parka", "puffer",
-         "down jacket", "coat", "vinterjacka"),
+         "down jacket", "coat", "vinterjacka",
+         "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_woolrich.txt"
     ),
 
-    # RALPH LAUREN – POLAND
+    # RALPH LAUREN HOODIES – POLAND
     market(
         "Ralph Lauren Polen", "vinted.pl",
         "ralph Lauren hoodie", "PLN", 60,
         ("ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt"),
+        ("hoodie", "felpa", "sweatshirt", "bluza"),
         SIZES, "seen_ids_rl_pl.txt"
     ),
 
-    # RALPH LAUREN – DENMARK
+    # RALPH LAUREN HOODIES – DENMARK
     market(
         "Ralph Lauren Danmark", "vinted.dk",
         "ralph Lauren hoodie", "DKK", 100,
         ("ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt"),
+        ("hoodie", "felpa", "sweatshirt", "hættetrøje"),
         SIZES, "seen_ids_rl_dk.txt"
     ),
 
-    # PATAGONIA – POLAND
+    # PATAGONIA VESTS – POLAND
     market(
         "Patagonia Polen", "vinted.pl",
         "Patagonia", "PLN", 200,
         ("patagonia",),
-        ("vest", "gilet", "fleece", "väst"),
+        ("vest", "gilet", "fleece", "väst", "kamizelka"),
         SIZES, "seen_ids_patagonia_pl.txt"
     ),
 
-    # PATAGONIA – DENMARK
+    # PATAGONIA VESTS – DENMARK
     market(
         "Patagonia Danmark", "vinted.dk",
         "Patagonia", "DKK", 335,
@@ -194,23 +200,23 @@ MARKETS = [
         SIZES, "seen_ids_patagonia_dk.txt"
     ),
 
-    # RALPH LAUREN DOWN – POLAND
+    # RALPH LAUREN DOWN JACKETS – POLAND
     market(
         "Ralph Lauren dunjackor Polen", "vinted.pl",
         "Ralph Lauren down jacket", "PLN", 320,
         ("ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka"),
+         "puffer", "puffjacka", "kurtka puchowa"),
         SIZES, "seen_ids_rl_down_pl.txt"
     ),
 
-    # RALPH LAUREN DOWN – DENMARK
+    # RALPH LAUREN DOWN JACKETS – DENMARK
     market(
         "Ralph Lauren dunjackor Danmark", "vinted.dk",
         "Ralph Lauren down jacket", "DKK", 535,
         ("ralph lauren",),
         ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka"),
+         "puffer", "puffjacka", "dunjakke"),
         SIZES, "seen_ids_rl_down_dk.txt"
     ),
 
@@ -220,7 +226,7 @@ MARKETS = [
         "Colmar", "PLN", 100,
         ("colmar",),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka"),
+         "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar_pl.txt"
     ),
 
@@ -230,7 +236,7 @@ MARKETS = [
         "Colmar", "DKK", 170,
         ("colmar",),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka"),
+         "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar_dk.txt"
     ),
 
@@ -240,7 +246,7 @@ MARKETS = [
         "J.Lindeberg", "PLN", 100,
         ("j.lindeberg", "j lindeberg", "jlindeberg"),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat"),
+         "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_jl_pl.txt"
     ),
 
@@ -250,7 +256,7 @@ MARKETS = [
         "J.Lindeberg", "DKK", 170,
         ("j.lindeberg", "j lindeberg", "jlindeberg"),
         ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat"),
+         "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_jl_dk.txt"
     ),
 ]
@@ -297,7 +303,7 @@ def save_seen(path, seen):
 def send_discord(item):
     if not DISCORD_WEBHOOK:
         print("DISCORD_WEBHOOK saknas.")
-        return
+        return False
 
     payload = {
         "content": (
@@ -317,15 +323,20 @@ def send_discord(item):
             timeout=20
         )
 
-        if response.status_code not in (200, 204):
-            print(
-                "Discord-fel:",
-                response.status_code,
-                response.text[:300]
-            )
+        if response.status_code in (200, 204):
+            print("✅ Discord-notis skickad.")
+            return True
+
+        print(
+            "❌ Discord-fel:",
+            response.status_code,
+            response.text[:300]
+        )
+        return False
 
     except Exception as exc:
-        print("Discord exception:", exc)
+        print("❌ Discord exception:", exc)
+        return False
 
 
 def scan_market(market_config):
@@ -421,9 +432,7 @@ def scan_market(market_config):
 
             item = {
                 "title": text[:200],
-                "price": (
-                    f"{price:g} {market_config['currency']}"
-                ),
+                "price": f"{price:g} {market_config['currency']}",
                 "size": detected_size,
                 "market": market_config["name"],
                 "url": item_url,
@@ -438,10 +447,15 @@ def scan_market(market_config):
                 item["size"]
             )
 
-            send_discord(item)
-
-            seen.add(item_id)
-            new_count += 1
+            # Markera annonsen som sedd ENDAST om Discord skickade notisen.
+            if send_discord(item):
+                seen.add(item_id)
+                new_count += 1
+            else:
+                print(
+                    f"⚠️ Annons {item_id} sparas inte som sedd. "
+                    "Den försöks igen vid nästa körning."
+                )
 
         save_seen(market_config["state"], seen)
 
