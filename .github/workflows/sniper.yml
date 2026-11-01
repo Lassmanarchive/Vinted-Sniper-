@@ -2,6 +2,7 @@ name: Vinted Sniper
 
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "2-59/5 * * * *"
 
@@ -28,15 +29,12 @@ jobs:
             seen_ids.txt
             seen_ids_colmar.txt
             seen_ids_jl.txt
-            seen_ids_acne.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
             seen_ids_colmar_pl.txt
             seen_ids_colmar_dk.txt
             seen_ids_jl_pl.txt
             seen_ids_jl_dk.txt
-            seen_ids_acne_pl.txt
-            seen_ids_acne_dk.txt
             seen_ids_patagonia.txt
             seen_ids_patagonia_pl.txt
             seen_ids_patagonia_dk.txt
@@ -44,6 +42,8 @@ jobs:
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
             seen_ids_hollister.txt
+            seen_ids_rl_sweater.txt
+            seen_ids_superdry.txt
           key: vinted-seen-${{ github.run_id }}
           restore-keys: |
             vinted-seen-
@@ -61,15 +61,12 @@ jobs:
             seen_ids.txt
             seen_ids_colmar.txt
             seen_ids_jl.txt
-            seen_ids_acne.txt
             seen_ids_rl_pl.txt
             seen_ids_rl_dk.txt
             seen_ids_colmar_pl.txt
             seen_ids_colmar_dk.txt
             seen_ids_jl_pl.txt
             seen_ids_jl_dk.txt
-            seen_ids_acne_pl.txt
-            seen_ids_acne_dk.txt
             seen_ids_patagonia.txt
             seen_ids_patagonia_pl.txt
             seen_ids_patagonia_dk.txt
@@ -77,4 +74,6 @@ jobs:
             seen_ids_rl_down_pl.txt
             seen_ids_rl_down_dk.txt
             seen_ids_hollister.txt
+            seen_ids_rl_sweater.txt
+            seen_ids_superdry.txt
           key: vinted-seen-${{ github.run_id }}
