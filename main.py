@@ -328,11 +328,10 @@ def send_discord(item):
 
     payload = {
         "content": (
-            f"🔥 **NY VINTED-TRÄFF**\n"
+            f"🔥 **{item['market'].upper()} – NYTT FYND!**\n"
             f"**{item['title']}**\n"
             f"💰 {item['price']}\n"
             f"📏 Storlek: {item['size']}\n"
-            f"🌍 {item['market']}\n"
             f"🔗 {item['url']}"
         )
     }
