@@ -1,3 +1,4 @@
+
 import os
 import re
 from pathlib import Path
@@ -7,6 +8,7 @@ from bs4 import BeautifulSoup
 
 
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
+GLOBAL_SEEN_FILE = Path("seen_global_ids.txt")
 
 HEADERS = {
     "User-Agent": (
@@ -61,7 +63,6 @@ MARKETS = [
         ("hoodie", "felpa", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids.txt"
     ),
-
     market(
         "Polo Ralph Lauren sweaters Sverige", "vinted.se",
         "Polo Ralph Lauren sweater", "SEK", 199,
@@ -71,7 +72,6 @@ MARKETS = [
          "dzianinowy", "trøje"),
         SIZES, "seen_ids_rl_sweater.txt"
     ),
-
     market(
         "Hollister hoodies Sverige", "vinted.se",
         "Hollister hoodie", "SEK", 199,
@@ -79,7 +79,6 @@ MARKETS = [
         ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_hollister.txt"
     ),
-
     market(
         "Superdry hoodies Sverige", "vinted.se",
         "Superdry hoodie", "SEK", 199,
@@ -87,7 +86,6 @@ MARKETS = [
         ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_superdry.txt"
     ),
-
     market(
         "Polo Ralph Lauren dunjackor Sverige", "vinted.se",
         "Polo Ralph Lauren down jacket", "SEK", 700,
@@ -96,7 +94,6 @@ MARKETS = [
          "puffer", "puffjacka", "kurtka puchowa", "dunjakke"),
         SIZES, "seen_ids_rl_down.txt"
     ),
-
     market(
         "Patagonia västar Sverige", "vinted.se",
         "Patagonia", "SEK", 400,
@@ -104,7 +101,6 @@ MARKETS = [
         ("väst", "fleeceväst", "vest", "gilet", "kamizelka"),
         SIZES, "seen_ids_patagonia.txt"
     ),
-
     market(
         "Colmar Sverige", "vinted.se",
         "Colmar", "SEK", 300,
@@ -113,7 +109,6 @@ MARKETS = [
          "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar.txt"
     ),
-
     market(
         "J.Lindeberg Sverige", "vinted.se",
         "J.Lindeberg", "SEK", 300,
@@ -122,7 +117,6 @@ MARKETS = [
          "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_jl.txt"
     ),
-
     market(
         "Barbour jackor Sverige", "vinted.se",
         "Barbour jacket", "SEK", 400,
@@ -131,7 +125,6 @@ MARKETS = [
          "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_barbour.txt"
     ),
-
     market(
         "Carhartt hoodies Sverige", "vinted.se",
         "Carhartt hoodie", "SEK", 150,
@@ -139,7 +132,6 @@ MARKETS = [
         ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
         SIZES, "seen_ids_carhartt.txt"
     ),
-
     market(
         "Woolrich jackor Sverige", "vinted.se",
         "Woolrich jacket", "SEK", 400,
@@ -148,7 +140,6 @@ MARKETS = [
          "down jacket", "coat", "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_woolrich.txt"
     ),
-
     market(
         "Polo Ralph Lauren Polen", "vinted.pl",
         "Polo Ralph Lauren hoodie", "PLN", 60,
@@ -156,7 +147,6 @@ MARKETS = [
         ("hoodie", "felpa", "sweatshirt", "bluza"),
         SIZES, "seen_ids_rl_pl.txt"
     ),
-
     market(
         "Polo Ralph Lauren Danmark", "vinted.dk",
         "Polo Ralph Lauren hoodie", "DKK", 100,
@@ -164,7 +154,6 @@ MARKETS = [
         ("hoodie", "felpa", "sweatshirt", "hættetrøje"),
         SIZES, "seen_ids_rl_dk.txt"
     ),
-
     market(
         "Patagonia Polen", "vinted.pl",
         "Patagonia", "PLN", 200,
@@ -172,7 +161,6 @@ MARKETS = [
         ("vest", "gilet", "fleece", "väst", "kamizelka"),
         SIZES, "seen_ids_patagonia_pl.txt"
     ),
-
     market(
         "Patagonia Danmark", "vinted.dk",
         "Patagonia", "DKK", 335,
@@ -180,7 +168,6 @@ MARKETS = [
         ("vest", "gilet", "fleece", "väst"),
         SIZES, "seen_ids_patagonia_dk.txt"
     ),
-
     market(
         "Polo Ralph Lauren dunjackor Polen", "vinted.pl",
         "Polo Ralph Lauren down jacket", "PLN", 320,
@@ -189,7 +176,6 @@ MARKETS = [
          "puffer", "puffjacka", "kurtka puchowa"),
         SIZES, "seen_ids_rl_down_pl.txt"
     ),
-
     market(
         "Polo Ralph Lauren dunjackor Danmark", "vinted.dk",
         "Polo Ralph Lauren down jacket", "DKK", 535,
@@ -198,7 +184,6 @@ MARKETS = [
          "puffer", "puffjacka", "dunjakke"),
         SIZES, "seen_ids_rl_down_dk.txt"
     ),
-
     market(
         "Colmar Polen", "vinted.pl",
         "Colmar", "PLN", 100,
@@ -207,7 +192,6 @@ MARKETS = [
          "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar_pl.txt"
     ),
-
     market(
         "Colmar Danmark", "vinted.dk",
         "Colmar", "DKK", 170,
@@ -216,7 +200,6 @@ MARKETS = [
          "vinterjacka", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_colmar_dk.txt"
     ),
-
     market(
         "J.Lindeberg Polen", "vinted.pl",
         "J.Lindeberg", "PLN", 100,
@@ -225,7 +208,6 @@ MARKETS = [
          "vinterjacka", "coat", "kurtka", "jakke"),
         JACKET_SIZES, "seen_ids_jl_pl.txt"
     ),
-
     market(
         "J.Lindeberg Danmark", "vinted.dk",
         "J.Lindeberg", "DKK", 170,
@@ -238,7 +220,6 @@ MARKETS = [
 
 
 def parse_price(text, currency_code):
-    """Hitta ett pris med rätt valuta i annonstexten."""
     if not text:
         return None
 
@@ -266,13 +247,8 @@ def parse_price(text, currency_code):
 
 
 def listing_card_text(link):
-    """
-    Försök läsa information från hela annonskortet.
-    Vinted kan lägga titel och pris utanför själva länken.
-    """
     pieces = []
 
-    # Börja med själva länken och dess bilder/etiketter.
     for node in [link, *link.select("img, [aria-label], [title]")]:
         for attr in ("aria-label", "title", "alt"):
             value = node.get(attr)
@@ -283,7 +259,6 @@ def listing_card_text(link):
         if visible:
             pieces.append(visible)
 
-    # Gå upp genom HTML-strukturen och leta efter annonskortet.
     current = link
 
     for _ in range(6):
@@ -296,11 +271,9 @@ def listing_card_text(link):
 
         for anchor in current.select('a[href*="/items/"]'):
             match = re.search(r"/items/(\d+)", anchor.get("href", ""))
-
             if match:
                 item_links.add(match.group(1))
 
-        # Om föräldern innehåller flera annonser går vi vidare uppåt.
         if len(item_links) > 1:
             continue
 
@@ -309,13 +282,10 @@ def listing_card_text(link):
         for node in current.select("img, [aria-label], [title]"):
             for attr in ("aria-label", "title", "alt"):
                 value = node.get(attr)
-
                 if value:
                     card_parts.append(value)
 
-        candidate = " ".join(
-            part for part in card_parts if part
-        )
+        candidate = " ".join(part for part in card_parts if part)
         candidate = re.sub(r"\s+", " ", candidate).strip()
 
         if len(candidate) >= 8:
@@ -327,8 +297,7 @@ def listing_card_text(link):
 
 
 def has_bad_condition(text):
-    text = text.lower()
-    return any(term in text for term in BAD_CONDITION_TERMS)
+    return any(term in text.lower() for term in BAD_CONDITION_TERMS)
 
 
 def load_seen(path):
@@ -337,15 +306,19 @@ def load_seen(path):
 
     try:
         return set(path.read_text(encoding="utf-8").splitlines())
-    except Exception:
+    except Exception as exc:
+        print(f"⚠️ Kunde inte läsa {path}: {exc}")
         return set()
 
 
 def save_seen(path, seen):
-    path.write_text(
-        "\n".join(sorted(seen)),
-        encoding="utf-8"
-    )
+    try:
+        path.write_text(
+            "\n".join(sorted(seen)),
+            encoding="utf-8"
+        )
+    except Exception as exc:
+        print(f"❌ Kunde inte spara {path}: {exc}")
 
 
 def send_discord(item):
@@ -375,11 +348,7 @@ def send_discord(item):
             print("✅ Discord-notis skickad.")
             return True
 
-        print(
-            "❌ Discord-fel:",
-            response.status_code,
-            response.text[:300]
-        )
+        print("❌ Discord-fel:", response.status_code, response.text[:300])
         return False
 
     except Exception as exc:
@@ -387,7 +356,7 @@ def send_discord(item):
         return False
 
 
-def scan_market(market_config):
+def scan_market(market_config, global_seen):
     print(f"\n🔎 {market_config['name']}")
 
     try:
@@ -397,22 +366,20 @@ def scan_market(market_config):
             timeout=30
         )
 
-        print(
-            f"HTTP {response.status_code} | "
-            f"{market_config['name']}"
-        )
+        print(f"HTTP {response.status_code} | {market_config['name']}")
 
         if response.status_code != 200:
             return
 
         soup = BeautifulSoup(response.text, "html.parser")
-        seen = load_seen(market_config["state"])
-        links = soup.select('a[href*="/items/"]')
 
-        print(
-            f"Hittade {len(links)} möjliga annonser "
-            f"på {market_config['name']}"
-        )
+        local_seen = load_seen(market_config["state"])
+        global_seen.update(local_seen)
+
+        links = soup.select('a[href*="/items/"]')
+        processed_ids = set()
+
+        print(f"Hittade {len(links)} möjliga annonslänkar")
 
         new_count = 0
 
@@ -430,46 +397,39 @@ def scan_market(market_config):
 
         for link in links:
             href = link.get("href")
-
             if not href:
                 continue
 
-            if href.startswith("/"):
-                item_url = market_config["base"] + href
-            else:
-                item_url = href
+            item_url = (
+                market_config["base"] + href
+                if href.startswith("/")
+                else href
+            )
 
-            item_id_match = re.search(r"/items/(\d+)", item_url)
-
-            if not item_id_match:
+            match = re.search(r"/items/(\d+)", item_url)
+            if not match:
                 continue
 
-            item_id = item_id_match.group(1)
+            item_id = match.group(1)
 
-            if item_id in seen:
+            if item_id in global_seen or item_id in processed_ids:
                 stats["Redan sedda"] += 1
                 continue
 
-            # Läs annonskortet i stället för bara länktexten.
-            text = listing_card_text(link)
+            processed_ids.add(item_id)
 
+            text = listing_card_text(link)
             if not text:
                 stats["Saknar annonstext"] += 1
                 continue
 
             text_lower = text.lower()
 
-            if not any(
-                brand in text_lower
-                for brand in market_config["brands"]
-            ):
+            if not any(brand in text_lower for brand in market_config["brands"]):
                 stats["Fel varumärke"] += 1
                 continue
 
-            if not any(
-                keyword in text_lower
-                for keyword in market_config["keywords"]
-            ):
+            if not any(keyword in text_lower for keyword in market_config["keywords"]):
                 stats["Fel plaggtyp"] += 1
                 continue
 
@@ -477,11 +437,7 @@ def scan_market(market_config):
                 stats["Dåligt skick"] += 1
                 continue
 
-            price = parse_price(
-                text,
-                market_config["currency_code"]
-            )
-
+            price = parse_price(text, market_config["currency_code"])
             if price is None:
                 stats["Pris saknas"] += 1
                 continue
@@ -513,49 +469,43 @@ def scan_market(market_config):
                 "url": item_url,
             }
 
-            print(
-                "🔥 MATCH:",
-                item["title"],
-                "|",
-                item["price"],
-                "|",
-                item["size"]
-            )
+            print("🔥 MATCH:", item["title"], "|", item["price"], "|", item["size"])
 
             if send_discord(item):
-                seen.add(item_id)
+                global_seen.add(item_id)
+                local_seen.add(item_id)
+
+                save_seen(GLOBAL_SEEN_FILE, global_seen)
+                save_seen(market_config["state"], local_seen)
+
                 new_count += 1
             else:
                 stats["Discord misslyckades"] += 1
-                print(
-                    f"⚠️ Annons {item_id} sparas inte som sedd. "
-                    "Den försöks igen vid nästa körning."
-                )
 
-        save_seen(market_config["state"], seen)
+        save_seen(GLOBAL_SEEN_FILE, global_seen)
+        save_seen(market_config["state"], local_seen)
 
         print("📊 FELSÖKNINGSSTATISTIK:")
-
         for reason, count in stats.items():
             print(f"   {reason}: {count}")
 
-        print(
-            f"Klart: {market_config['name']} | "
-            f"Nya träffar: {new_count}"
-        )
+        print(f"Klart: {market_config['name']} | Nya träffar: {new_count}")
 
     except Exception as exc:
-        print(
-            f"❌ Fel i {market_config['name']}: {exc}"
-        )
+        print(f"❌ Fel i {market_config['name']}: {exc}")
 
 
 def main():
     print("🚀 Vinted Sniper startar...")
     print(f"Antal marknader: {len(MARKETS)}")
 
+    global_seen = load_seen(GLOBAL_SEEN_FILE)
+    print(f"Gemensamt sparade annonser: {len(global_seen)}")
+
     for market_config in MARKETS:
-        scan_market(market_config)
+        scan_market(market_config, global_seen)
+
+    save_seen(GLOBAL_SEEN_FILE, global_seen)
 
     print("\n✅ Bevakningen är klar.")
 
