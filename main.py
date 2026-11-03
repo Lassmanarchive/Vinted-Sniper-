@@ -1,13 +1,19 @@
-
 import os
 import re
+import unicodedata
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
 
 
+# =========================================================
+# INSTÄLLNINGAR
+# =========================================================
+
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
+
 GLOBAL_SEEN_FILE = Path("seen_global_ids.txt")
 
 HEADERS = {
@@ -18,238 +24,449 @@ HEADERS = {
     )
 }
 
+SIZES = {"S", "M", "L", "XL"}
+
+
+# Ord som gör att annonser med beskrivet dåligt skick sorteras bort.
 BAD_CONDITION_TERMS = (
     "trasig", "sönder", "defekt", "fläck", "fläckig",
     "missfärg", "hål", "reva", "sliten", "slitage",
-    "noppig", "noppor", "skada", "skadat", "broken",
-    "damaged", "stain", "stained", "discolor", "hole",
-    "tear", "worn", "pilling", "uszkodz", "plama",
-    "dziura", "rozdar", "zuży", "plet", "hullet",
-    "revet", "slidt",
+    "noppig", "noppor", "skada", "skadat",
+    "broken", "damaged", "stain", "stained",
+    "discolor", "hole", "tear", "worn", "pilling",
+    "uszkodz", "plama", "dziura", "rozdar",
+    "zuży", "hullet", "revet", "slidt",
+)
+
+# Udda plaggtyper som inte ska ge träffar.
+EXCLUDED_TERMS = (
+    "baby", "newborn", "toddler", "hund",
+    "dog clothes", "kostym", "costume",
+    "maskerad", "replica", "fake",
 )
 
 
-def market(name, domain, search, currency, limit, brands,
-           keywords, sizes, state):
+# =========================================================
+# HJÄLPFUNKTIONER FÖR SÖKNINGAR
+# =========================================================
+
+def market(
+    name,
+    brand_header,
+    domain,
+    search,
+    currency_code,
+    limit,
+    brands,
+    required_groups,
+    state,
+    excluded_terms=None,
+):
+    """
+    Varje required_group måste ha minst en träff.
+    Exempel:
+    [
+        ("hoodie", "sweatshirt"),
+        ("fur", "faux fur", "päls")
+    ]
+    """
+
     return {
         "name": name,
+        "brand_header": brand_header,
         "base": f"https://www.{domain}",
         "url": (
             f"https://www.{domain}/catalog?"
-            f"search_text={requests.utils.quote(search)}"
+            f"search_text={quote(search)}"
             f"&price_to={limit:.2f}"
-            f"&currency={currency}"
+            f"&currency={currency_code}"
             f"&order=newest_first"
         ),
         "brands": brands,
-        "keywords": keywords,
-        "sizes": sizes,
+        "required_groups": required_groups,
+        "excluded_terms": excluded_terms or EXCLUDED_TERMS,
         "limit": limit,
-        "currency": "kr" if currency in ("SEK", "DKK") else "zł",
-        "currency_code": currency,
+        "currency_code": currency_code,
+        "currency": (
+            "kr" if currency_code in ("SEK", "DKK") else "zł"
+        ),
         "state": Path(state),
     }
 
 
-SIZES = {"S", "M", "L", "XL"}
-JACKET_SIZES = {"S", "M", "L", "XL"}
-
+# =========================================================
+# SÖKNINGAR
+# =========================================================
 
 MARKETS = [
+
+    # -----------------------------------------------------
+    # RALPH LAUREN HOODIES
+    # -----------------------------------------------------
+
     market(
-        "Polo Ralph Lauren Sverige", "vinted.se",
-        "Polo Ralph Lauren hoodie", "SEK", 199,
-        ("polo ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt", "bluza", "hættetrøje"),
-        SIZES, "seen_ids.txt"
+        "Ralph Lauren hoodies Sverige",
+        "RALPH LAUREN",
+        "vinted.se",
+        "Polo Ralph Lauren hoodie",
+        "SEK",
+        199,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            ("hoodie", "sweatshirt", "hooded sweatshirt"),
+            (
+                "pony", "logo", "vintage",
+                "american flag", "flag",
+                "polo bear", "big pony", "zip"
+            ),
+        ],
+        "seen_rl_hoodie_se.txt",
     ),
+
     market(
-        "Polo Ralph Lauren sweaters Sverige", "vinted.se",
-        "Polo Ralph Lauren sweater", "SEK", 199,
-        ("polo ralph lauren",),
-        ("sweater", "jumper", "knit", "knitwear",
-         "stickad", "tröja", "pullover", "sweter",
-         "dzianinowy", "trøje"),
-        SIZES, "seen_ids_rl_sweater.txt"
+        "Ralph Lauren hoodies Polen",
+        "RALPH LAUREN",
+        "vinted.pl",
+        "Polo Ralph Lauren hoodie",
+        "PLN",
+        60,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            ("hoodie", "bluza"),
+            (
+                "pony", "logo", "vintage",
+                "american flag", "flag",
+                "polo bear", "big pony", "zip"
+            ),
+        ],
+        "seen_rl_hoodie_pl.txt",
     ),
+
     market(
-        "Hollister hoodies Sverige", "vinted.se",
-        "Hollister hoodie", "SEK", 199,
-        ("hollister",),
-        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
-        SIZES, "seen_ids_hollister.txt"
+        "Ralph Lauren hoodies Danmark",
+        "RALPH LAUREN",
+        "vinted.dk",
+        "Polo Ralph Lauren hoodie",
+        "DKK",
+        100,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            ("hoodie", "hættetrøje", "sweatshirt"),
+            (
+                "pony", "logo", "vintage",
+                "american flag", "flag",
+                "polo bear", "big pony", "zip"
+            ),
+        ],
+        "seen_rl_hoodie_dk.txt",
     ),
+
+    # -----------------------------------------------------
+    # RALPH LAUREN STICKADE TRÖJOR
+    # -----------------------------------------------------
+
     market(
-        "Superdry hoodies Sverige", "vinted.se",
-        "Superdry hoodie", "SEK", 199,
-        ("superdry",),
-        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
-        SIZES, "seen_ids_superdry.txt"
+        "Ralph Lauren klassiska stickade tröjor Sverige",
+        "RALPH LAUREN",
+        "vinted.se",
+        "Polo Ralph Lauren sweater",
+        "SEK",
+        199,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            (
+                "sweater", "jumper", "knit",
+                "stickad", "tröja", "pullover"
+            ),
+            (
+                "cable", "flätstickad", "quarter zip",
+                "half zip", "american flag",
+                "polo bear", "vintage", "pony"
+            ),
+        ],
+        "seen_rl_sweater_se.txt",
     ),
+
+    # -----------------------------------------------------
+    # RALPH LAUREN DUNJACKOR
+    # -----------------------------------------------------
+
     market(
-        "Polo Ralph Lauren dunjackor Sverige", "vinted.se",
-        "Polo Ralph Lauren down jacket", "SEK", 700,
-        ("polo ralph lauren",),
-        ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka", "kurtka puchowa", "dunjakke"),
-        SIZES, "seen_ids_rl_down.txt"
+        "Ralph Lauren dunjackor Sverige",
+        "RALPH LAUREN",
+        "vinted.se",
+        "Polo Ralph Lauren puffer",
+        "SEK",
+        700,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            (
+                "puffer", "down jacket", "down coat",
+                "dunjacka", "dun", "dunjakke"
+            ),
+        ],
+        "seen_rl_down_se.txt",
     ),
+
     market(
-        "Patagonia västar Sverige", "vinted.se",
-        "Patagonia", "SEK", 400,
+        "Ralph Lauren dunjackor Polen",
+        "RALPH LAUREN",
+        "vinted.pl",
+        "Polo Ralph Lauren puffer",
+        "PLN",
+        320,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            (
+                "puffer", "down jacket", "down coat",
+                "dunjacka", "dun", "kurtka puchowa"
+            ),
+        ],
+        "seen_rl_down_pl.txt",
+    ),
+
+    market(
+        "Ralph Lauren dunjackor Danmark",
+        "RALPH LAUREN",
+        "vinted.dk",
+        "Polo Ralph Lauren puffer",
+        "DKK",
+        535,
+        ("polo ralph lauren", "ralph lauren"),
+        [
+            (
+                "puffer", "down jacket", "down coat",
+                "dunjacka", "dun", "dunjakke"
+            ),
+        ],
+        "seen_rl_down_dk.txt",
+    ),
+
+    # -----------------------------------------------------
+    # ABERCROMBIE & FITCH PÄLSHOODIES
+    # -----------------------------------------------------
+
+    market(
+        "Abercrombie pälshoodies Sverige",
+        "ABERCROMBIE & FITCH",
+        "vinted.se",
+        "Abercrombie faux fur hoodie",
+        "SEK",
+        400,
+        (
+            "abercrombie & fitch",
+            "abercrombie and fitch",
+            "abercrombie",
+        ),
+        [
+            ("hoodie", "hooded sweatshirt", "sweatshirt"),
+            (
+                "fur", "faux fur", "fur lined",
+                "fur-lined", "sherpa",
+                "päls", "pälsfodrad", "fuskpäls"
+            ),
+        ],
+        "seen_abercrombie_fur.txt",
+    ),
+
+    # -----------------------------------------------------
+    # PATAGONIA VÄSTAR
+    # -----------------------------------------------------
+
+    market(
+        "Patagonia västar Sverige",
+        "PATAGONIA",
+        "vinted.se",
+        "Patagonia vest",
+        "SEK",
+        400,
         ("patagonia",),
-        ("väst", "fleeceväst", "vest", "gilet", "kamizelka"),
-        SIZES, "seen_ids_patagonia.txt"
+        [
+            ("vest", "väst", "fleecevest", "gilet"),
+        ],
+        "seen_patagonia_se.txt",
     ),
+
     market(
-        "Colmar Sverige", "vinted.se",
-        "Colmar", "SEK", 300,
+        "Patagonia västar Polen",
+        "PATAGONIA",
+        "vinted.pl",
+        "Patagonia vest",
+        "PLN",
+        200,
+        ("patagonia",),
+        [
+            ("vest", "gilet", "kamizelka"),
+        ],
+        "seen_patagonia_pl.txt",
+    ),
+
+    market(
+        "Patagonia västar Danmark",
+        "PATAGONIA",
+        "vinted.dk",
+        "Patagonia vest",
+        "DKK",
+        335,
+        ("patagonia",),
+        [
+            ("vest", "gilet", "fleece"),
+        ],
+        "seen_patagonia_dk.txt",
+    ),
+
+    # -----------------------------------------------------
+    # COLMAR JACKOR
+    # -----------------------------------------------------
+
+    market(
+        "Colmar jackor Sverige",
+        "COLMAR",
+        "vinted.se",
+        "Colmar jacket",
+        "SEK",
+        300,
         ("colmar",),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_colmar.txt"
+        [
+            (
+                "jacka", "jacket", "puffer",
+                "dunjacka", "vinterjacka"
+            ),
+        ],
+        "seen_colmar_se.txt",
     ),
+
     market(
-        "J.Lindeberg Sverige", "vinted.se",
-        "J.Lindeberg", "SEK", 300,
+        "Colmar jackor Polen",
+        "COLMAR",
+        "vinted.pl",
+        "Colmar jacket",
+        "PLN",
+        100,
+        ("colmar",),
+        [
+            (
+                "jacka", "jacket", "puffer",
+                "kurtka", "kurtka puchowa"
+            ),
+        ],
+        "seen_colmar_pl.txt",
+    ),
+
+    market(
+        "Colmar jackor Danmark",
+        "COLMAR",
+        "vinted.dk",
+        "Colmar jacket",
+        "DKK",
+        170,
+        ("colmar",),
+        [
+            ("jacka", "jacket", "puffer", "vinterjakke"),
+        ],
+        "seen_colmar_dk.txt",
+    ),
+
+    # -----------------------------------------------------
+    # J.LINDEBERG JACKOR
+    # -----------------------------------------------------
+
+    market(
+        "J.Lindeberg jackor Sverige",
+        "J.LINDEBERG",
+        "vinted.se",
+        "J.Lindeberg jacket",
+        "SEK",
+        300,
         ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_jl.txt"
+        [
+            (
+                "jacka", "jacket", "puffer",
+                "dunjacka", "vinterjacka", "coat"
+            ),
+        ],
+        "seen_jl_se.txt",
     ),
+
     market(
-        "Barbour jackor Sverige", "vinted.se",
-        "Barbour jacket", "SEK", 400,
+        "J.Lindeberg jackor Polen",
+        "J.LINDEBERG",
+        "vinted.pl",
+        "J.Lindeberg jacket",
+        "PLN",
+        100,
+        ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        [
+            (
+                "jacka", "jacket", "puffer",
+                "dunjacka", "vinterjacka", "coat", "kurtka"
+            ),
+        ],
+        "seen_jl_pl.txt",
+    ),
+
+    market(
+        "J.Lindeberg jackor Danmark",
+        "J.LINDEBERG",
+        "vinted.dk",
+        "J.Lindeberg jacket",
+        "DKK",
+        170,
+        ("j.lindeberg", "j lindeberg", "jlindeberg"),
+        [
+            (
+                "jacka", "jacket", "puffer",
+                "dunjacka", "vinterjakke", "coat"
+            ),
+        ],
+        "seen_jl_dk.txt",
+    ),
+
+    # -----------------------------------------------------
+    # BARBOUR KLASSISKA JACKOR
+    # -----------------------------------------------------
+
+    market(
+        "Barbour klassiska jackor Sverige",
+        "BARBOUR",
+        "vinted.se",
+        "Barbour jacket",
+        "SEK",
+        400,
         ("barbour",),
-        ("jacka", "jacket", "quilted", "wax jacket",
-         "vinterjacka", "coat", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_barbour.txt"
-    ),
-    market(
-        "Carhartt hoodies Sverige", "vinted.se",
-        "Carhartt hoodie", "SEK", 150,
-        ("carhartt", "carhartt wip"),
-        ("hoodie", "sweatshirt", "bluza", "hættetrøje"),
-        SIZES, "seen_ids_carhartt.txt"
-    ),
-    market(
-        "Woolrich jackor Sverige", "vinted.se",
-        "Woolrich jacket", "SEK", 400,
-        ("woolrich",),
-        ("jacka", "jacket", "parka", "puffer",
-         "down jacket", "coat", "vinterjacka", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_woolrich.txt"
-    ),
-    market(
-        "Polo Ralph Lauren Polen", "vinted.pl",
-        "Polo Ralph Lauren hoodie", "PLN", 60,
-        ("polo ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt", "bluza"),
-        SIZES, "seen_ids_rl_pl.txt"
-    ),
-    market(
-        "Polo Ralph Lauren Danmark", "vinted.dk",
-        "Polo Ralph Lauren hoodie", "DKK", 100,
-        ("polo ralph lauren",),
-        ("hoodie", "felpa", "sweatshirt", "hættetrøje"),
-        SIZES, "seen_ids_rl_dk.txt"
-    ),
-    market(
-        "Patagonia Polen", "vinted.pl",
-        "Patagonia", "PLN", 200,
-        ("patagonia",),
-        ("vest", "gilet", "fleece", "väst", "kamizelka"),
-        SIZES, "seen_ids_patagonia_pl.txt"
-    ),
-    market(
-        "Patagonia Danmark", "vinted.dk",
-        "Patagonia", "DKK", 335,
-        ("patagonia",),
-        ("vest", "gilet", "fleece", "väst"),
-        SIZES, "seen_ids_patagonia_dk.txt"
-    ),
-    market(
-        "Polo Ralph Lauren dunjackor Polen", "vinted.pl",
-        "Polo Ralph Lauren down jacket", "PLN", 320,
-        ("polo ralph lauren",),
-        ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka", "kurtka puchowa"),
-        SIZES, "seen_ids_rl_down_pl.txt"
-    ),
-    market(
-        "Polo Ralph Lauren dunjackor Danmark", "vinted.dk",
-        "Polo Ralph Lauren down jacket", "DKK", 535,
-        ("polo ralph lauren",),
-        ("dunjacka", "dun", "down jacket", "down coat",
-         "puffer", "puffjacka", "dunjakke"),
-        SIZES, "seen_ids_rl_down_dk.txt"
-    ),
-    market(
-        "Colmar Polen", "vinted.pl",
-        "Colmar", "PLN", 100,
-        ("colmar",),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_colmar_pl.txt"
-    ),
-    market(
-        "Colmar Danmark", "vinted.dk",
-        "Colmar", "DKK", 170,
-        ("colmar",),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_colmar_dk.txt"
-    ),
-    market(
-        "J.Lindeberg Polen", "vinted.pl",
-        "J.Lindeberg", "PLN", 100,
-        ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_jl_pl.txt"
-    ),
-    market(
-        "J.Lindeberg Danmark", "vinted.dk",
-        "J.Lindeberg", "DKK", 170,
-        ("j.lindeberg", "j lindeberg", "jlindeberg"),
-        ("jacka", "jacket", "puffer", "dunjacka",
-         "vinterjacka", "coat", "kurtka", "jakke"),
-        JACKET_SIZES, "seen_ids_jl_dk.txt"
+        [
+            ("jacka", "jacket", "coat"),
+            (
+                "wax", "quilted", "bedale",
+                "beaufort", "ashby", "liddesdale",
+                "beadnell", "international", "classic"
+            ),
+        ],
+        "seen_barbour_se.txt",
     ),
 ]
 
 
-def parse_price(text, currency_code):
-    if not text:
-        return None
+# =========================================================
+# TEXT OCH ANNONSER
+# =========================================================
 
-    normalized = text.replace("\xa0", " ").replace("\u202f", " ")
-    normalized = normalized.replace(",", ".")
-
-    if currency_code in ("SEK", "DKK"):
-        suffix = r"(?:kr\.?|SEK)"
-    else:
-        suffix = r"(?:zł|PLN)"
-
-    matches = re.findall(
-        rf"(\d+(?:\.\d{{1,2}})?)\s*{suffix}",
-        normalized,
-        flags=re.IGNORECASE
+def normalize_text(text):
+    text = text.lower()
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(
+        char for char in text
+        if not unicodedata.combining(char)
     )
-
-    if not matches:
-        return None
-
-    try:
-        return float(matches[0])
-    except ValueError:
-        return None
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def listing_card_text(link):
     pieces = []
 
-    for node in [link, *link.select("img, [aria-label], [title]")]:
+    nodes = [link, *link.select("img, [aria-label], [title]")]
+
+    for node in nodes:
         for attr in ("aria-label", "title", "alt"):
             value = node.get(attr)
             if value:
@@ -267,14 +484,17 @@ def listing_card_text(link):
         if current is None:
             break
 
-        item_links = set()
+        item_ids = set()
 
         for anchor in current.select('a[href*="/items/"]'):
-            match = re.search(r"/items/(\d+)", anchor.get("href", ""))
+            match = re.search(
+                r"/items/(\d+)",
+                anchor.get("href", "")
+            )
             if match:
-                item_links.add(match.group(1))
+                item_ids.add(match.group(1))
 
-        if len(item_links) > 1:
+        if len(item_ids) > 1:
             continue
 
         card_parts = [current.get_text(" ", strip=True)]
@@ -285,8 +505,9 @@ def listing_card_text(link):
                 if value:
                     card_parts.append(value)
 
-        candidate = " ".join(part for part in card_parts if part)
-        candidate = re.sub(r"\s+", " ", candidate).strip()
+        candidate = " ".join(
+            part for part in card_parts if part
+        )
 
         if len(candidate) >= 8:
             pieces.append(candidate)
@@ -296,16 +517,116 @@ def listing_card_text(link):
     return re.sub(r"\s+", " ", result).strip()
 
 
-def has_bad_condition(text):
-    return any(term in text.lower() for term in BAD_CONDITION_TERMS)
+def matches_brand(text, brands):
+    normalized = normalize_text(text)
 
+    return any(
+        normalize_text(brand) in normalized
+        for brand in brands
+    )
+
+
+def matches_groups(text, groups):
+    normalized = normalize_text(text)
+
+    for group in groups:
+        if not any(
+            normalize_text(term) in normalized
+            for term in group
+        ):
+            return False
+
+    return True
+
+
+def has_bad_condition(text):
+    normalized = normalize_text(text)
+
+    return any(
+        normalize_text(term) in normalized
+        for term in BAD_CONDITION_TERMS
+    )
+
+
+def has_excluded_term(text, excluded_terms):
+    normalized = normalize_text(text)
+
+    return any(
+        normalize_text(term) in normalized
+        for term in excluded_terms
+    )
+
+
+# =========================================================
+# PRIS OCH STORLEK
+# =========================================================
+
+def parse_price(text, currency_code):
+    if not text:
+        return None
+
+    normalized = (
+        text.replace("\xa0", " ")
+        .replace("\u202f", " ")
+        .replace(",", ".")
+    )
+
+    if currency_code in ("SEK", "DKK"):
+        suffix = r"(?:kr\.?|SEK)"
+    else:
+        suffix = r"(?:zł|PLN)"
+
+    matches = re.findall(
+        rf"(\d+(?:\.\d{{1,2}})?)\s*{suffix}",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+
+    if not matches:
+        return None
+
+    try:
+        return float(matches[0])
+    except ValueError:
+        return None
+
+
+def detect_size(text):
+    # Försök först hitta en storlek med tydlig etikett.
+    labeled = re.search(
+        r"(?:size|storlek|strl|stl|taille|rozmiar)"
+        r"\s*[:\-]?\s*(XL|S|M|L)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    if labeled:
+        return labeled.group(1).upper()
+
+    # Fallback: leta efter fristående versaler.
+    # Skiljer exempelvis M från bokstaven m i vanlig text.
+    for size in ("XL", "S", "M", "L"):
+        if re.search(
+            rf"(?<![A-Za-z]){size}(?![A-Za-z])",
+            text,
+        ):
+            return size
+
+    return None
+
+
+# =========================================================
+# SPARA SEDDA ANNONSER
+# =========================================================
 
 def load_seen(path):
     if not path.exists():
         return set()
 
     try:
-        return set(path.read_text(encoding="utf-8").splitlines())
+        return set(
+            path.read_text(encoding="utf-8").splitlines()
+        )
     except Exception as exc:
         print(f"⚠️ Kunde inte läsa {path}: {exc}")
         return set()
@@ -315,23 +636,28 @@ def save_seen(path, seen):
     try:
         path.write_text(
             "\n".join(sorted(seen)),
-            encoding="utf-8"
+            encoding="utf-8",
         )
     except Exception as exc:
         print(f"❌ Kunde inte spara {path}: {exc}")
 
 
+# =========================================================
+# DISCORD
+# =========================================================
+
 def send_discord(item):
     if not DISCORD_WEBHOOK:
-        print("DISCORD_WEBHOOK saknas.")
+        print("❌ DISCORD_WEBHOOK saknas.")
         return False
 
     payload = {
         "content": (
-            f"🔥 **{item['market'].upper()} – NYTT FYND!**\n"
-            f"**{item['title']}**\n"
-            f"💰 {item['price']}\n"
-            f"📏 Storlek: {item['size']}\n"
+            f"🔥 **{item['brand_header']} – NYTT FYND!**\n"
+            f"_{item['market']}_\n\n"
+            f"**{item['title'][:180]}**\n"
+            f"💰 **{item['price']}**\n"
+            f"📏 Storlek: **{item['size']}**\n"
             f"🔗 {item['url']}"
         )
     }
@@ -340,14 +666,18 @@ def send_discord(item):
         response = requests.post(
             DISCORD_WEBHOOK,
             json=payload,
-            timeout=20
+            timeout=20,
         )
 
         if response.status_code in (200, 204):
             print("✅ Discord-notis skickad.")
             return True
 
-        print("❌ Discord-fel:", response.status_code, response.text[:300])
+        print(
+            "❌ Discord-fel:",
+            response.status_code,
+            response.text[:300],
+        )
         return False
 
     except Exception as exc:
@@ -355,24 +685,31 @@ def send_discord(item):
         return False
 
 
-def scan_market(market_config, global_seen):
-    print(f"\n🔎 {market_config['name']}")
+# =========================================================
+# SKANNA EN MARKNAD
+# =========================================================
+
+def scan_market(config, global_seen):
+    print(f"\n🔎 {config['name']}")
 
     try:
         response = requests.get(
-            market_config["url"],
+            config["url"],
             headers=HEADERS,
-            timeout=30
+            timeout=30,
         )
 
-        print(f"HTTP {response.status_code} | {market_config['name']}")
+        print(
+            f"HTTP {response.status_code} | "
+            f"{config['name']}"
+        )
 
         if response.status_code != 200:
             return
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        local_seen = load_seen(market_config["state"])
+        local_seen = load_seen(config["state"])
         global_seen.update(local_seen)
 
         links = soup.select('a[href*="/items/"]')
@@ -380,129 +717,167 @@ def scan_market(market_config, global_seen):
 
         print(f"Hittade {len(links)} möjliga annonslänkar")
 
-        new_count = 0
-
         stats = {
             "Redan sedda": 0,
-            "Saknar annonstext": 0,
             "Fel varumärke": 0,
-            "Fel plaggtyp": 0,
+            "Fel plaggtyp/modell": 0,
             "Dåligt skick": 0,
+            "Uteslutet sökord": 0,
             "Pris saknas": 0,
             "För dyr": 0,
             "Storlek saknas": 0,
             "Discord misslyckades": 0,
         }
 
+        new_count = 0
+
         for link in links:
             href = link.get("href")
+
             if not href:
                 continue
 
             item_url = (
-                market_config["base"] + href
+                config["base"] + href
                 if href.startswith("/")
                 else href
             )
 
             match = re.search(r"/items/(\d+)", item_url)
+
             if not match:
                 continue
 
             item_id = match.group(1)
 
-            if item_id in global_seen or item_id in processed_ids:
+            if (
+                item_id in global_seen
+                or item_id in processed_ids
+            ):
                 stats["Redan sedda"] += 1
                 continue
 
             processed_ids.add(item_id)
 
             text = listing_card_text(link)
+
             if not text:
-                stats["Saknar annonstext"] += 1
                 continue
 
-            text_lower = text.lower()
+            normalized = normalize_text(text)
 
-            if not any(brand in text_lower for brand in market_config["brands"]):
+            # Varumärke
+            if not matches_brand(text, config["brands"]):
                 stats["Fel varumärke"] += 1
                 continue
 
-            if not any(keyword in text_lower for keyword in market_config["keywords"]):
-                stats["Fel plaggtyp"] += 1
+            # Plaggtyp och eventuell modellstil
+            if not matches_groups(
+                text,
+                config["required_groups"],
+            ):
+                stats["Fel plaggtyp/modell"] += 1
                 continue
 
-            if has_bad_condition(text_lower):
+            # Dåligt skick
+            if has_bad_condition(text):
                 stats["Dåligt skick"] += 1
                 continue
 
-            price = parse_price(text, market_config["currency_code"])
+            # Uteslutna ord
+            if has_excluded_term(
+                text,
+                config["excluded_terms"],
+            ):
+                stats["Uteslutet sökord"] += 1
+                continue
+
+            # Pris
+            price = parse_price(
+                text,
+                config["currency_code"],
+            )
+
             if price is None:
                 stats["Pris saknas"] += 1
                 continue
 
-            if price > market_config["limit"]:
+            if price > config["limit"]:
                 stats["För dyr"] += 1
                 continue
 
-            detected_size = None
+            # Storlek
+            detected_size = detect_size(text)
 
-            for size in market_config["sizes"]:
-                if re.search(
-                    rf"(?<![A-Za-z]){re.escape(size)}(?![A-Za-z])",
-                    text,
-                    re.IGNORECASE
-                ):
-                    detected_size = size
-                    break
-
-            if detected_size is None:
+            if detected_size not in SIZES:
                 stats["Storlek saknas"] += 1
                 continue
 
             item = {
                 "title": text[:200],
-                "price": f"{price:g} {market_config['currency']}",
+                "price": (
+                    f"{price:g} {config['currency']}"
+                ),
                 "size": detected_size,
-                "market": market_config["name"],
+                "market": config["name"],
+                "brand_header": config["brand_header"],
                 "url": item_url,
             }
 
-            print("🔥 MATCH:", item["title"], "|", item["price"], "|", item["size"])
+            print(
+                "🔥 MATCH:",
+                item["title"],
+                "|",
+                item["price"],
+                "|",
+                item["size"],
+            )
 
             if send_discord(item):
                 global_seen.add(item_id)
                 local_seen.add(item_id)
 
                 save_seen(GLOBAL_SEEN_FILE, global_seen)
-                save_seen(market_config["state"], local_seen)
+                save_seen(config["state"], local_seen)
 
                 new_count += 1
             else:
                 stats["Discord misslyckades"] += 1
 
         save_seen(GLOBAL_SEEN_FILE, global_seen)
-        save_seen(market_config["state"], local_seen)
+        save_seen(config["state"], local_seen)
 
-        print("📊 FELSÖKNINGSSTATISTIK:")
+        print("\n📊 STATISTIK")
+
         for reason, count in stats.items():
-            print(f"   {reason}: {count}")
+            print(f"{reason}: {count}")
 
-        print(f"Klart: {market_config['name']} | Nya träffar: {new_count}")
+        print(
+            f"Klart: {config['name']} | "
+            f"Nya träffar: {new_count}"
+        )
 
     except Exception as exc:
-        print(f"❌ Fel i {market_config['name']}: {exc}")
+        print(f"❌ Fel i {config['name']}: {exc}")
 
+
+# =========================================================
+# START
+# =========================================================
 
 def main():
     print("🚀 Vinted Sniper startar...")
-    print(f"Antal marknader: {len(MARKETS)}")
+    print(f"Antal sökningar: {len(MARKETS)}")
 
     global_seen = load_seen(GLOBAL_SEEN_FILE)
-    print(f"Gemensamt sparade annonser: {len(global_seen)}")
 
-    for market_config in MARKETS:
-        scan_market(market_config, global_seen)
+    print(
+        f"Gemensamt sparade annonser: "
+        f"{len(global_seen)}"
+    )
+
+    for config in MARKETS:
+        scan_market(config, global_seen)
 
     save_seen(GLOBAL_SEEN_FILE, global_seen)
 
