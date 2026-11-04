@@ -65,6 +65,7 @@ def market(
     required_groups,
     state,
     excluded_terms=None,
+    size_mode="clothing",
 ):
     return {
         "name": name,
@@ -84,6 +85,7 @@ def market(
         "currency_code": currency_code,
         "currency": "kr" if currency_code in ("SEK", "DKK") else "zł",
         "state": Path(state),
+        "size_mode": size_mode,
     }
 
 
@@ -363,6 +365,64 @@ MARKETS = [
         ),
     ),
 
+
+    # SKOR – ALLA VANLIGA EU-STORLEKAR (35–50)
+    market(
+        "Lanvin skor Sverige",
+        "LANVIN SKOR",
+        "vinted.se",
+        "Lanvin shoes sneakers",
+        "SEK",
+        700,
+        ("lanvin",),
+        [("shoe", "shoes", "sneaker", "sneakers", "trainer", "trainers", "loafer", "boot", "boots", "sko", "skor")],
+        "seen_lanvin_shoes_se.txt",
+        size_mode="shoe",
+    ),
+    market(
+        "Valentino skor Sverige",
+        "VALENTINO SKOR",
+        "vinted.se",
+        "Valentino Garavani shoes sneakers",
+        "SEK",
+        600,
+        ("valentino", "valentino garavani"),
+        [("shoe", "shoes", "sneaker", "sneakers", "trainer", "trainers", "loafer", "boot", "boots", "sko", "skor")],
+        "seen_valentino_shoes_se.txt",
+        size_mode="shoe",
+    ),
+    market(
+        "Maison Margiela GAT Sverige",
+        "MAISON MARGIELA GAT",
+        "vinted.se",
+        "Maison Margiela GAT Replica sneakers",
+        "SEK",
+        800,
+        ("maison margiela", "maison martin margiela", "margiela"),
+        [
+            ("gat", "german army trainer", "replica sneaker", "replica sneakers"),
+            ("shoe", "shoes", "sneaker", "sneakers", "trainer", "trainers", "sko", "skor"),
+        ],
+        "seen_margiela_gat_se.txt",
+        excluded_terms=tuple(term for term in EXCLUDED_TERMS if term != "replica"),
+        size_mode="shoe",
+    ),
+    market(
+        "Adidas x Wales Bonner skor Sverige",
+        "ADIDAS X WALES BONNER",
+        "vinted.se",
+        "Adidas Wales Bonner shoes sneakers",
+        "SEK",
+        700,
+        ("adidas", "wales bonner"),
+        [
+            ("wales bonner", "walesbonner"),
+            ("shoe", "shoes", "sneaker", "sneakers", "trainer", "trainers", "sko", "skor"),
+        ],
+        "seen_adidas_wales_bonner_se.txt",
+        size_mode="shoe",
+    ),
+
     # BARBOUR KLASSISKA JACKOR
     market(
         "Barbour klassiska jackor Sverige",
@@ -499,7 +559,30 @@ def parse_price(text, currency_code):
         return None
 
 
-def detect_size(text):
+def detect_size(text, size_mode="clothing"):
+    if size_mode == "shoe":
+        # EU-storlekar för vuxenskor. Skosökningarna använder inte S/M/L/XL.
+        patterns = (
+            r"(?:eu|eur|size|storlek|strl|stl|taille|rozmiar)\s*[:\-]?\s*(3[5-9]|4[0-9]|50)\b",
+            r"\b(3[5-9]|4[0-9]|50)\s*(?:eu|eur)\b",
+        )
+        for pattern in patterns:
+            found = re.search(pattern, text, flags=re.IGNORECASE)
+            if found:
+                return found.group(1) + " EU"
+
+        # Vinted kan ibland visa storleken som en ensam siffra.
+        without_prices = re.sub(
+            r"\b\d+(?:[.,]\d{1,2})?\s*(?:kr\.?|sek|zł|pln|dkk)\b",
+            " ",
+            text,
+            flags=re.IGNORECASE,
+        )
+        candidates = re.findall(r"(?<!\d)(3[5-9]|4[0-9]|50)(?!\d)", without_prices)
+        if candidates:
+            return candidates[0] + " EU"
+        return None
+
     labeled = re.search(
         r"(?:size|storlek|strl|stl|taille|rozmiar)"
         r"\s*[:\-]?\s*(XL|S|M|L)\b",
@@ -674,9 +757,13 @@ def scan_market(config, global_seen):
                 stats["För dyr"] += 1
                 continue
 
-            detected_size = detect_size(text)
+            detected_size = detect_size(text, config.get("size_mode", "clothing"))
 
-            if detected_size not in SIZES:
+            if config.get("size_mode", "clothing") == "clothing":
+                if detected_size not in SIZES:
+                    stats["Storlek saknas"] += 1
+                    continue
+            elif detected_size is None:
                 stats["Storlek saknas"] += 1
                 continue
 
