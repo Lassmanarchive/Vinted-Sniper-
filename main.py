@@ -1,8 +1,13 @@
+
 import os
 import re
+import time
+import random
 import unicodedata
 from pathlib import Path
 from urllib.parse import quote
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -93,7 +98,7 @@ def market(
 
 
 # =========================================================
-# SÖKNINGAR
+# SÖKNINGAR – 40 STYCKEN
 # =========================================================
 
 MARKETS = [
@@ -314,7 +319,7 @@ MARKETS = [
         "Colmar jacket",
         "DKK",
         170,
-        ("colmar",),
+        ("jacka", "jacket", "puffer", "vinterjakke"),
         [("jacka", "jacket", "puffer", "vinterjakke")],
         "seen_colmar_dk.txt",
     ),
@@ -442,10 +447,6 @@ MARKETS = [
         "seen_barbour_se.txt",
     ),
 
-    # =====================================================
-    # NYA SÖKNINGAR
-    # =====================================================
-
     # HOLLISTER CARDIGANS
     market(
         "Hollister cardigans Sverige",
@@ -492,7 +493,7 @@ MARKETS = [
         "seen_hollister_cardigan_dk.txt",
     ),
 
-    # ABERCROMBIE & FITCH CARDIGANS
+    # ABERCROMBIE CARDIGANS
     market(
         "Abercrombie cardigans Sverige",
         "ABERCROMBIE CARDIGAN",
@@ -664,12 +665,15 @@ def listing_card_text(link):
 
     for _ in range(6):
         current = current.parent
+
         if current is None:
             break
 
         item_ids = set()
+
         for anchor in current.select('a[href*="/items/"]'):
             match = re.search(r"/items/(\d+)", anchor.get("href", ""))
+
             if match:
                 item_ids.add(match.group(1))
 
@@ -681,28 +685,40 @@ def listing_card_text(link):
         for node in current.select("img, [aria-label], [title]"):
             for attr in ("aria-label", "title", "alt"):
                 value = node.get(attr)
+
                 if value:
                     card_parts.append(value)
 
-        candidate = " ".join(part for part in card_parts if part)
+        candidate = " ".join(
+            part for part in card_parts if part
+        )
+
         if len(candidate) >= 8:
             pieces.append(candidate)
             break
 
     result = " ".join(dict.fromkeys(pieces))
+
     return re.sub(r"\s+", " ", result).strip()
 
 
 def matches_brand(text, brands):
     normalized = normalize_text(text)
-    return any(normalize_text(brand) in normalized for brand in brands)
+
+    return any(
+        normalize_text(brand) in normalized
+        for brand in brands
+    )
 
 
 def matches_groups(text, groups):
     normalized = normalize_text(text)
 
     for group in groups:
-        if not any(normalize_text(term) in normalized for term in group):
+        if not any(
+            normalize_text(term) in normalized
+            for term in group
+        ):
             return False
 
     return True
@@ -710,7 +726,11 @@ def matches_groups(text, groups):
 
 def contains_any_term(text, terms):
     normalized = normalize_text(text)
-    return any(normalize_text(term) in normalized for term in terms)
+
+    return any(
+        normalize_text(term) in normalized
+        for term in terms
+    )
 
 
 # =========================================================
@@ -733,23 +753,31 @@ def parse_price(text, currency_code):
             r"kr\.?\s*(\d+(?:\.\d{1,2})?)",
             r"(\d+(?:\.\d{1,2})?)\s*SEK",
         )
+
     elif currency_code == "PLN":
         patterns = (
             r"(\d+(?:\.\d{1,2})?)\s*zł",
             r"zł\s*(\d+(?:\.\d{1,2})?)",
             r"(\d+(?:\.\d{1,2})?)\s*PLN",
         )
+
     elif currency_code == "EUR":
         patterns = (
             r"€\s*(\d+(?:\.\d{1,2})?)",
             r"(\d+(?:\.\d{1,2})?)\s*€",
             r"(\d+(?:\.\d{1,2})?)\s*EUR",
         )
+
     else:
         return None
 
     for pattern in patterns:
-        matches = re.findall(pattern, normalized, flags=re.IGNORECASE)
+        matches = re.findall(
+            pattern,
+            normalized,
+            flags=re.IGNORECASE,
+        )
+
         if matches:
             try:
                 return float(matches[0])
@@ -762,26 +790,37 @@ def parse_price(text, currency_code):
 def detect_size(text, size_mode="clothing"):
     if size_mode == "shoe":
         patterns = (
-            r"(?:eu|eur|size|storlek|strl|stl|taille|rozmiar)\s*[:\-]?\s*(3[5-9]|4[0-9]|50)\b",
+            r"(?:eu|eur|size|storlek|strl|stl|taille|rozmiar)"
+            r"\s*[:\-]?\s*(3[5-9]|4[0-9]|50)\b",
             r"\b(3[5-9]|4[0-9]|50)\s*(?:eu|eur)\b",
         )
+
         for pattern in patterns:
-            found = re.search(pattern, text, flags=re.IGNORECASE)
+            found = re.search(
+                pattern,
+                text,
+                flags=re.IGNORECASE,
+            )
+
             if found:
                 return found.group(1) + " EU"
 
         without_prices = re.sub(
-            r"\b\d+(?:[.,]\d{1,2})?\s*(?:kr\.?|sek|zł|pln|dkk|eur|€)\b",
+            r"\b\d+(?:[.,]\d{1,2})?\s*"
+            r"(?:kr\.?|sek|zł|pln|dkk|eur|€)\b",
             " ",
             text,
             flags=re.IGNORECASE,
         )
+
         candidates = re.findall(
             r"(?<!\d)(3[5-9]|4[0-9]|50)(?!\d)",
             without_prices,
         )
+
         if candidates:
             return candidates[0] + " EU"
+
         return None
 
     labeled = re.search(
@@ -795,7 +834,10 @@ def detect_size(text, size_mode="clothing"):
         return labeled.group(1).upper()
 
     for size in ("XL", "S", "M", "L"):
-        if re.search(rf"(?<![A-Za-z]){size}(?![A-Za-z])", text):
+        if re.search(
+            rf"(?<![A-Za-z]){size}(?![A-Za-z])",
+            text,
+        ):
             return size
 
     return None
@@ -810,7 +852,10 @@ def load_seen(path):
         return set()
 
     try:
-        return set(path.read_text(encoding="utf-8").splitlines())
+        return set(
+            path.read_text(encoding="utf-8").splitlines()
+        )
+
     except Exception as exc:
         print(f"⚠️ Kunde inte läsa {path}: {exc}")
         return set()
@@ -818,7 +863,11 @@ def load_seen(path):
 
 def save_seen(path, seen):
     try:
-        path.write_text("\n".join(sorted(seen)), encoding="utf-8")
+        path.write_text(
+            "\n".join(sorted(seen)),
+            encoding="utf-8",
+        )
+
     except Exception as exc:
         print(f"❌ Kunde inte spara {path}: {exc}")
 
@@ -854,12 +903,52 @@ def send_discord(item):
             print("✅ Discord-notis skickad.")
             return True
 
-        print("❌ Discord-fel:", response.status_code, response.text[:300])
+        print(
+            "❌ Discord-fel:",
+            response.status_code,
+            response.text[:300],
+        )
+
         return False
 
     except Exception as exc:
         print("❌ Discord exception:", exc)
         return False
+
+
+# =========================================================
+# VÄNTA VID HTTP 429
+# =========================================================
+
+def retry_wait(response, attempt):
+    retry_after = response.headers.get("Retry-After")
+
+    if retry_after:
+        try:
+            wait_seconds = float(retry_after)
+
+        except ValueError:
+            try:
+                retry_date = parsedate_to_datetime(retry_after)
+
+                wait_seconds = (
+                    retry_date - datetime.now(timezone.utc)
+                ).total_seconds()
+
+            except Exception:
+                wait_seconds = 120 * (2 ** attempt)
+
+    else:
+        wait_seconds = 120 * (2 ** attempt)
+
+    wait_seconds = max(1, min(wait_seconds, 900))
+
+    print(
+        f"⏳ HTTP 429. Väntar {int(wait_seconds)} sekunder "
+        f"innan nytt försök."
+    )
+
+    time.sleep(wait_seconds)
 
 
 # =========================================================
@@ -869,19 +958,65 @@ def send_discord(item):
 def scan_market(config, global_seen):
     print(f"\n🔎 {config['name']}")
 
+    response = None
+
+    for attempt in range(3):
+        try:
+            response = requests.get(
+                config["url"],
+                headers=HEADERS,
+                timeout=30,
+            )
+
+            print(
+                f"HTTP {response.status_code} | "
+                f"{config['name']} | "
+                f"Försök {attempt + 1}/3"
+            )
+
+            if response.status_code == 200:
+                break
+
+            if response.status_code == 429:
+                if attempt < 2:
+                    retry_wait(response, attempt)
+                    continue
+
+                print(
+                    f"❌ Misslyckades efter tre försök: "
+                    f"{config['name']}"
+                )
+                return False
+
+            print(
+                f"❌ HTTP-fel {response.status_code}. "
+                f"Sökningen kunde inte kontrolleras."
+            )
+
+            return False
+
+        except requests.RequestException as exc:
+            print(f"⚠️ Anslutningsfel: {exc}")
+
+            if attempt < 2:
+                wait_seconds = 30 * (2 ** attempt)
+
+                print(
+                    f"⏳ Försöker igen om {wait_seconds} sekunder."
+                )
+
+                time.sleep(wait_seconds)
+
+            else:
+                print("❌ Misslyckades efter tre försök.")
+                return False
+
+    if response is None or response.status_code != 200:
+        return False
+
     try:
-        response = requests.get(
-            config["url"],
-            headers=HEADERS,
-            timeout=30,
-        )
-
-        print(f"HTTP {response.status_code} | {config['name']}")
-
-        if response.status_code != 200:
-            return
-
         soup = BeautifulSoup(response.text, "html.parser")
+
         local_seen = load_seen(config["state"])
         global_seen.update(local_seen)
 
@@ -907,10 +1042,16 @@ def scan_market(config, global_seen):
 
         for link in links:
             href = link.get("href")
+
             if not href:
                 continue
 
-            item_url = config["base"] + href if href.startswith("/") else href
+            item_url = (
+                config["base"] + href
+                if href.startswith("/")
+                else href
+            )
+
             match = re.search(r"/items/(\d+)", item_url)
 
             if not match:
@@ -918,11 +1059,15 @@ def scan_market(config, global_seen):
 
             item_id = match.group(1)
 
-            if item_id in global_seen or item_id in processed_ids:
+            if (
+                item_id in global_seen
+                or item_id in processed_ids
+            ):
                 stats["Redan sedda"] += 1
                 continue
 
             processed_ids.add(item_id)
+
             text = listing_card_text(link)
 
             if not text:
@@ -932,7 +1077,10 @@ def scan_market(config, global_seen):
                 stats["Fel varumärke"] += 1
                 continue
 
-            if not matches_groups(text, config["required_groups"]):
+            if not matches_groups(
+                text,
+                config["required_groups"],
+            ):
                 stats["Fel plaggtyp/modell"] += 1
                 continue
 
@@ -944,11 +1092,17 @@ def scan_market(config, global_seen):
                 stats["Dåligt skick"] += 1
                 continue
 
-            if contains_any_term(text, config["excluded_terms"]):
+            if contains_any_term(
+                text,
+                config["excluded_terms"],
+            ):
                 stats["Uteslutet sökord"] += 1
                 continue
 
-            price = parse_price(text, config["currency_code"])
+            price = parse_price(
+                text,
+                config["currency_code"],
+            )
 
             if price is None:
                 stats["Pris saknas"] += 1
@@ -967,6 +1121,7 @@ def scan_market(config, global_seen):
                 if detected_size not in SIZES:
                     stats["Storlek saknas"] += 1
                     continue
+
             elif detected_size is None:
                 stats["Storlek saknas"] += 1
                 continue
@@ -992,9 +1147,12 @@ def scan_market(config, global_seen):
             if send_discord(item):
                 global_seen.add(item_id)
                 local_seen.add(item_id)
+
                 save_seen(GLOBAL_SEEN_FILE, global_seen)
                 save_seen(config["state"], local_seen)
+
                 new_count += 1
+
             else:
                 stats["Discord misslyckades"] += 1
 
@@ -1002,13 +1160,20 @@ def scan_market(config, global_seen):
         save_seen(config["state"], local_seen)
 
         print("\n📊 STATISTIK")
+
         for reason, count in stats.items():
             print(f"{reason}: {count}")
 
-        print(f"Klart: {config['name']} | Nya träffar: {new_count}")
+        print(
+            f"Klart: {config['name']} | "
+            f"Nya träffar: {new_count}"
+        )
+
+        return True
 
     except Exception as exc:
         print(f"❌ Fel i {config['name']}: {exc}")
+        return False
 
 
 # =========================================================
@@ -1021,13 +1186,52 @@ def main():
 
     global_seen = load_seen(GLOBAL_SEEN_FILE)
 
-    print(f"Gemensamt sparade annonser: {len(global_seen)}")
+    print(
+        f"Gemensamt sparade annonser: {len(global_seen)}"
+    )
 
-    for config in MARKETS:
-        scan_market(config, global_seen)
+    successful = 0
+    failed = 0
+
+    for index, config in enumerate(MARKETS):
+
+        if index > 0:
+            wait_seconds = random.uniform(8, 12)
+
+            print(
+                f"\n⏳ Väntar {wait_seconds:.1f} sekunder "
+                f"innan nästa sökning..."
+            )
+
+            time.sleep(wait_seconds)
+
+        result = scan_market(config, global_seen)
+
+        if result:
+            successful += 1
+        else:
+            failed += 1
 
     save_seen(GLOBAL_SEEN_FILE, global_seen)
-    print("\n✅ Bevakningen är klar.")
+
+    print("\n" + "=" * 45)
+    print("📊 SLUTRAPPORT")
+    print("=" * 45)
+
+    print(f"Totalt antal sökningar: {len(MARKETS)}")
+    print(f"✅ Lyckade: {successful}")
+    print(f"❌ Misslyckade: {failed}")
+
+    if failed == 0:
+        print("\n🎉 Alla sökningar kontrollerades!")
+
+    else:
+        print(
+            "\n⚠️ Alla sökningar kunde inte kontrolleras. "
+            "Kontrollera felloggen ovan."
+        )
+
+    print("\nBevakningen avslutad.")
 
 
 if __name__ == "__main__":
