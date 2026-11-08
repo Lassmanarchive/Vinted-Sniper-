@@ -52,6 +52,26 @@ EXCLUDED_TERMS = (
     "maskerad", "hund", "dog clothes",
 )
 
+# Färger för de nya skjortsökningarna
+BLACK_TERMS = (
+    "black", "svart", "svarta", "noir",
+    "czarny", "czarna", "czarne",
+    "musta", "sort",
+)
+
+BLUE_TERMS = (
+    "blue", "blå", "blått", "blåa",
+    "navy", "marine", "dark blue",
+    "niebieski", "niebieska",
+    "sininen", "bla",
+)
+
+WHITE_TERMS = (
+    "white", "vit", "vita", "vitt",
+    "weiss", "weiß", "bialy", "biały",
+    "biala", "valkoinen", "hvid",
+)
+
 
 # =========================================================
 # HJÄLPFUNKTIONER FÖR SÖKNINGAR
@@ -98,7 +118,7 @@ def market(
 
 
 # =========================================================
-# SÖKNINGAR – 40 STYCKEN
+# SÖKNINGAR
 # =========================================================
 
 MARKETS = [
@@ -319,7 +339,7 @@ MARKETS = [
         "Colmar jacket",
         "DKK",
         170,
-        ("jacka", "jacket", "puffer", "vinterjakke"),
+        ("colmar",),
         [("jacka", "jacket", "puffer", "vinterjakke")],
         "seen_colmar_dk.txt",
     ),
@@ -539,96 +559,191 @@ MARKETS = [
         "seen_abercrombie_cardigan_dk.txt",
     ),
 
-    # BURBERRY SHIRTS
+    # BURBERRY – ENDAST SVARTA SKJORTOR
     market(
-        "Burberry skjortor Sverige",
-        "BURBERRY SHIRT",
+        "Burberry svarta skjortor Sverige",
+        "BURBERRY SVART SKJORTA",
         "vinted.se",
         "Burberry shirt",
         "SEK",
         200,
         ("burberry",),
-        [("shirt", "shirts", "skjorta", "skjortor")],
+        [
+            ("shirt", "shirts", "skjorta", "skjortor"),
+            BLACK_TERMS,
+        ],
         "seen_burberry_shirt_se.txt",
     ),
     market(
-        "Burberry skjortor Polen",
-        "BURBERRY SHIRT",
+        "Burberry svarta skjortor Polen",
+        "BURBERRY SVART SKJORTA",
         "vinted.pl",
         "Burberry shirt",
         "PLN",
         78,
         ("burberry",),
-        [("shirt", "shirts", "koszula", "koszule")],
+        [
+            ("shirt", "shirts", "koszula", "koszule"),
+            BLACK_TERMS,
+        ],
         "seen_burberry_shirt_pl.txt",
     ),
     market(
-        "Burberry skjortor Finland",
-        "BURBERRY SHIRT",
+        "Burberry svarta skjortor Finland",
+        "BURBERRY SVART SKJORTA",
         "vinted.fi",
         "Burberry shirt",
         "EUR",
         18,
         ("burberry",),
-        [("shirt", "shirts", "paita")],
+        [
+            ("shirt", "shirts", "paita"),
+            BLACK_TERMS,
+        ],
         "seen_burberry_shirt_fi.txt",
     ),
     market(
-        "Burberry skjortor Danmark",
-        "BURBERRY SHIRT",
+        "Burberry svarta skjortor Danmark",
+        "BURBERRY SVART SKJORTA",
         "vinted.dk",
         "Burberry shirt",
         "DKK",
         130,
         ("burberry",),
-        [("shirt", "shirts", "skjorte", "skjorter")],
+        [
+            ("shirt", "shirts", "skjorte", "skjorter"),
+            BLACK_TERMS,
+        ],
         "seen_burberry_shirt_dk.txt",
     ),
 
-    # RALPH LAUREN SHIRTS
+    # RALPH LAUREN – ENDAST BLÅ OCH VITA SKJORTOR
     market(
-        "Ralph Lauren skjortor Sverige",
-        "RALPH LAUREN SHIRT",
+        "Ralph Lauren blå och vita skjortor Sverige",
+        "RALPH LAUREN BLÅ/VIT SKJORTA",
         "vinted.se",
         "Polo Ralph Lauren shirt",
         "SEK",
         149,
         ("polo ralph lauren", "ralph lauren"),
-        [("shirt", "shirts", "skjorta", "skjortor")],
+        [
+            ("shirt", "shirts", "skjorta", "skjortor"),
+            BLUE_TERMS + WHITE_TERMS,
+        ],
         "seen_rl_shirt_se.txt",
     ),
     market(
-        "Ralph Lauren skjortor Polen",
-        "RALPH LAUREN SHIRT",
+        "Ralph Lauren blå och vita skjortor Polen",
+        "RALPH LAUREN BLÅ/VIT SKJORTA",
         "vinted.pl",
         "Polo Ralph Lauren shirt",
         "PLN",
         58,
         ("polo ralph lauren", "ralph lauren"),
-        [("shirt", "shirts", "koszula", "koszule")],
+        [
+            ("shirt", "shirts", "koszula", "koszule"),
+            BLUE_TERMS + WHITE_TERMS,
+        ],
         "seen_rl_shirt_pl.txt",
     ),
     market(
-        "Ralph Lauren skjortor Finland",
-        "RALPH LAUREN SHIRT",
+        "Ralph Lauren blå och vita skjortor Finland",
+        "RALPH LAUREN BLÅ/VIT SKJORTA",
         "vinted.fi",
         "Polo Ralph Lauren shirt",
         "EUR",
         13,
         ("polo ralph lauren", "ralph lauren"),
-        [("shirt", "shirts", "paita")],
+        [
+            ("shirt", "shirts", "paita"),
+            BLUE_TERMS + WHITE_TERMS,
+        ],
         "seen_rl_shirt_fi.txt",
     ),
     market(
-        "Ralph Lauren skjortor Danmark",
-        "RALPH LAUREN SHIRT",
+        "Ralph Lauren blå och vita skjortor Danmark",
+        "RALPH LAUREN BLÅ/VIT SKJORTA",
         "vinted.dk",
         "Polo Ralph Lauren shirt",
         "DKK",
         97,
         ("polo ralph lauren", "ralph lauren"),
-        [("shirt", "shirts", "skjorte", "skjorter")],
+        [
+            ("shirt", "shirts", "skjorte", "skjorter"),
+            BLUE_TERMS + WHITE_TERMS,
+        ],
         "seen_rl_shirt_dk.txt",
+    ),
+
+    # STONE ISLAND – ENDAST STICKADE TRÖJOR
+    market(
+        "Stone Island stickade tröjor Sverige",
+        "STONE ISLAND STICKAD TRÖJA",
+        "vinted.se",
+        "Stone Island knit sweater",
+        "SEK",
+        300,
+        ("stone island",),
+        [
+            (
+                "knit", "knitwear", "sweater", "jumper",
+                "pullover", "stickad", "stickat", "tröja",
+                "maglione", "sweter", "dzianin", "strik",
+            ),
+        ],
+        "seen_stone_island_knit_se.txt",
+    ),
+    market(
+        "Stone Island stickade tröjor Polen",
+        "STONE ISLAND STICKAD TRÖJA",
+        "vinted.pl",
+        "Stone Island knit sweater",
+        "PLN",
+        100,
+        ("stone island",),
+        [
+            (
+                "knit", "knitwear", "sweater", "jumper",
+                "pullover", "stickad", "stickat", "tröja",
+                "maglione", "sweter", "dzianin", "strik",
+            ),
+        ],
+        "seen_stone_island_knit_pl.txt",
+    ),
+    market(
+        "Stone Island stickade tröjor Finland",
+        "STONE ISLAND STICKAD TRÖJA",
+        "vinted.fi",
+        "Stone Island knit sweater",
+        "EUR",
+        26,
+        ("stone island",),
+        [
+            (
+                "knit", "knitwear", "sweater", "jumper",
+                "pullover", "stickad", "stickat", "tröja",
+                "maglione", "sweter", "dzianin", "neulepaita",
+                "strik",
+            ),
+        ],
+        "seen_stone_island_knit_fi.txt",
+    ),
+    market(
+        "Stone Island stickade tröjor Danmark",
+        "STONE ISLAND STICKAD TRÖJA",
+        "vinted.dk",
+        "Stone Island knit sweater",
+        "DKK",
+        170,
+        ("stone island",),
+        [
+            (
+                "knit", "knitwear", "sweater", "jumper",
+                "pullover", "stickad", "stickat", "tröja",
+                "maglione", "sweter", "dzianin", "strik",
+            ),
+        ],
+        "seen_stone_island_knit_dk.txt",
     ),
 ]
 
@@ -672,7 +787,10 @@ def listing_card_text(link):
         item_ids = set()
 
         for anchor in current.select('a[href*="/items/"]'):
-            match = re.search(r"/items/(\d+)", anchor.get("href", ""))
+            match = re.search(
+                r"/items/(\d+)",
+                anchor.get("href", ""),
+            )
 
             if match:
                 item_ids.add(match.group(1))
@@ -1028,7 +1146,7 @@ def scan_market(config, global_seen):
         stats = {
             "Redan sedda": 0,
             "Fel varumärke": 0,
-            "Fel plaggtyp/modell": 0,
+            "Fel plaggtyp/modell/färg": 0,
             "Dam/barn eller ej herr": 0,
             "Dåligt skick": 0,
             "Uteslutet sökord": 0,
@@ -1081,7 +1199,7 @@ def scan_market(config, global_seen):
                 text,
                 config["required_groups"],
             ):
-                stats["Fel plaggtyp/modell"] += 1
+                stats["Fel plaggtyp/modell/färg"] += 1
                 continue
 
             if contains_any_term(text, NON_MENS_TERMS):
